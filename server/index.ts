@@ -32,7 +32,8 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["https://braincard-frontend.vercel.app"],
-    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
