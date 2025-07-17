@@ -28,7 +28,11 @@ decksRouter.get(
 
 decksRouter.post(
   "/",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { name } = req.body;
 
@@ -79,7 +83,11 @@ decksRouter.post(
 
 decksRouter.put(
   "/:id",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { id } = req.params;
       const { name } = req.body;
@@ -120,7 +128,11 @@ decksRouter.put(
 
 decksRouter.delete(
   "/:id",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { id } = req.params;
       const deleteDeck = await Deck.findByIdAndDelete({

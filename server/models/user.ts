@@ -1,7 +1,44 @@
 import mongoose from "mongoose";
 import { configureJSON } from "../utils/utils.js";
+// Define the base user interface
+interface IUser {
+  username: string;
+  name?: string;
+  passwordHash?: string;
+}
 
-const userSchema = new mongoose.Schema(
+// Define the stats interface
+interface IUserStats {
+  totalDecks: number;
+  totalCards: number;
+  cardsStudied: number;
+  cardsNotLearning: number;
+  cardsStudying: number;
+  difficultCards: number;
+  masteredCards: number;
+}
+
+// Define the virtual fields interface
+interface IUserVirtuals {
+  totalDecks?: number;
+}
+
+// Define the methods interface
+interface IUserMethods {
+  getStats(): Promise<IUserStats>;
+}
+
+// Combine all interfaces for the document type
+export type UserDocument = mongoose.Document &
+  IUser &
+  IUserVirtuals &
+  IUserMethods;
+
+const userSchema = new mongoose.Schema<
+  IUser,
+  mongoose.Model<UserDocument>,
+  IUserMethods
+>(
   {
     username: {
       type: String,
@@ -26,7 +63,9 @@ userSchema.virtual("totalDecks", {
 });
 
 // Có thể combine multiple queries thành 1 aggregation
-userSchema.methods.getStats = async function () {
+userSchema.methods.getStats = async function (
+  this: UserDocument
+): Promise<IUserStats> {
   await this.populate("totalDecks");
   const cardStats = await mongoose.model("Card").aggregate([
     {

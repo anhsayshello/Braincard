@@ -14,7 +14,7 @@ loginRouter.post(
     request: Request<any, any, LoginReqBody>,
     response: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { username, password } = request.body;
 

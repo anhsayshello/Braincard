@@ -14,7 +14,7 @@ registerRouter.post(
     request: Request<any, any, RegisterReqBody>,
     response: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { username, name, password } = request.body;
 

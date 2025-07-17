@@ -14,7 +14,11 @@ searchRouter.use(authenticateToken);
 
 searchRouter.get(
   "/cards/search",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const {
         q, // search query cho front và back card

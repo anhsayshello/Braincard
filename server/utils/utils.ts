@@ -7,7 +7,7 @@ import { CardStatus } from "../constants/enum";
 export const configureJSON = (schema: Schema<any>): unknown =>
   schema.set("toJSON", {
     virtuals: true,
-    transform: (document: Document, returnedObject) => {
+    transform: (_document: Document, returnedObject) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       returnedObject.id = returnedObject._id.toString();
       delete returnedObject._id;

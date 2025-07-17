@@ -10,7 +10,11 @@ feedbackRoute.use(authenticateToken);
 
 feedbackRoute.post(
   "/",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const user = await User.findById(req.userId);
       if (!user) {

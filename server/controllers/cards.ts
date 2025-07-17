@@ -24,7 +24,7 @@ cardsRouter.get(
     req: Request<CardParams, any, any, CardQuery>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId } = req.params;
       const { q, page = "1" } = req.query; // Thêm filter theo status nếu cần
@@ -85,7 +85,7 @@ cardsRouter.get(
     req: Request<CardParams, any, CardReqBody>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId } = req.params;
       const deck = await Deck.findById(deckId);
@@ -116,7 +116,7 @@ cardsRouter.post(
     req: Request<CardParams, any, CardReqBody>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId } = req.params;
       const { frontCard, backCard } = req.body;
@@ -161,7 +161,7 @@ cardsRouter.put(
     req: Request<CardParams, any, CardReqBody>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId, cardId } = req.params;
       const { frontCard, backCard } = req.body;
@@ -203,7 +203,7 @@ cardsRouter.patch(
     req: Request<CardParams, any, ReviewCardReqBody>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId, cardId } = req.params;
       const { status } = req.body;
@@ -261,7 +261,7 @@ cardsRouter.delete(
     req: Request<CardParams, any, { cardIds: string[] }>,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<Response | void> => {
     try {
       const { deckId } = req.params;
       const { cardIds } = req.body; // Array các card IDs

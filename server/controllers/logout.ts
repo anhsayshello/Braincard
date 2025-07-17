@@ -9,7 +9,11 @@ const logoutRouter = express.Router();
 logoutRouter.post(
   "/",
   // eslint-disable-next-line @typescript-eslint/require-await
-  async (request: Request, response: Response, next: NextFunction) => {
+  (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Response | void => {
     try {
       const token = getTokenFrom(request);
 

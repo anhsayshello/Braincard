@@ -12,7 +12,7 @@ export default function authenticateToken(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) {
+): Response | void {
   try {
     const token = getTokenFrom(req);
     // Handle null token case

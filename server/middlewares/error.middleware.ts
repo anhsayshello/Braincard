@@ -1,12 +1,12 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Error } from "mongoose";
 
 export default function errorHandler(
   error: Error,
-  _req,
+  _req: Request,
   res: Response<{ error: string }>,
   next: NextFunction
-) {
+): Response | void {
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {

@@ -1,4 +1,4 @@
-import { NextFunction, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import Notification from "../models/notification.ts";
 import User from "../models/user.ts";
 import authenticateToken from "../middlewares/authenticateToken.middleware.ts";
@@ -10,7 +10,11 @@ notificationRoute.use(authenticateToken);
 
 notificationRoute.get(
   "/unread-count",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const unreadCount = await Notification.countDocuments({
         userId: req.userId,
@@ -25,7 +29,11 @@ notificationRoute.get(
 
 notificationRoute.get(
   "/",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const allNotifications = await Notification.find({
         userId: req.userId,
@@ -41,11 +49,15 @@ notificationRoute.get(
 
 notificationRoute.post(
   "/",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { title, content } = req.body;
 
-      const user = User.findById(req.userId);
+      const user = await User.findById(req.userId);
       if (!user) {
         return res.status(400).json({ error: "userId missing or not valid" });
       }
@@ -66,29 +78,40 @@ notificationRoute.post(
   }
 );
 
-notificationRoute.put("/all", async (req, res, next) => {
-  try {
-    const updateAllNotifications = await Notification.updateMany(
-      { isRead: false },
-      { isRead: true }
-    );
-    if (!updateAllNotifications) {
-      return res.status(404).json({ error: "Notification not found" });
-    }
+notificationRoute.put(
+  "/all",
+  async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const updateAllNotifications = await Notification.updateMany(
+        { isRead: false },
+        { isRead: true }
+      );
+      if (!updateAllNotifications) {
+        return res.status(404).json({ error: "Notification not found" });
+      }
 
-    return res.status(200).json({
-      message: `Successfully marked ${updateAllNotifications.modifiedCount} notification(s) as read`,
-      matchedCount: updateAllNotifications.matchedCount,
-      modifiedCount: updateAllNotifications.modifiedCount,
-    });
-  } catch (error) {
-    next(error);
+      return res.status(200).json({
+        message: `Successfully marked ${updateAllNotifications.modifiedCount} notification(s) as read`,
+        matchedCount: updateAllNotifications.matchedCount,
+        modifiedCount: updateAllNotifications.modifiedCount,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 notificationRoute.put(
   "/:id",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { id } = req.params;
       const updateNotification = await Notification.findByIdAndUpdate(
@@ -110,7 +133,7 @@ notificationRoute.put(
 
 notificationRoute.delete(
   "/all",
-  async (req, res: Response, next: NextFunction) => {
+  async (_req, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const deleteResult = await Notification.deleteMany({});
 
@@ -125,7 +148,11 @@ notificationRoute.delete(
 
 notificationRoute.delete(
   "/:id",
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     try {
       const { id } = req.params;
       const deleteResult = await Notification.findByIdAndDelete(id);
