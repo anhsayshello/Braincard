@@ -31,7 +31,7 @@ mongoose
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://braincard-frontend.vercel.app",
+    origin: ["https://braincard-frontend.vercel.app"],
     credentials: true,
   })
 );
