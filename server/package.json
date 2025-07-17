@@ -7,11 +7,11 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "tsx index.ts",
     "dev": "tsx watch index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "vercel-build": "tsc"
+    "tsc": "tsc"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
