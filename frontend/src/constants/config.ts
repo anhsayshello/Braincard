@@ -1,5 +1,5 @@
 const config = {
-  baseUrl: "http://localhost:3001/",
+  baseUrl: "braincard-api.vercel.app/",
 } as const;
 
 export default config;
