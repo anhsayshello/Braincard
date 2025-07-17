@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import Spinner from "@/components/Spinner";
 import classNames from "classnames";
-import { useParams, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import getTimeAgo from "@/helpers/getTimeAgo";
 import EmptyNotification from "./components/EmptyNotification";
 import Metadata from "@/components/Metadata";
@@ -42,9 +42,7 @@ export default function Notifications() {
     queryKey: ["notification"],
     queryFn: () => notificationApi.get(),
   });
-  console.log(dataNotifications);
-  const { notificationId } = useParams();
-  console.log(notificationId);
+  console.log(searchParams);
 
   const readOneNotificationMutation = useMutation({
     mutationFn: notificationApi.readOne,
