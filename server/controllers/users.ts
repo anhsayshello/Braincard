@@ -1,7 +1,7 @@
 import { NextFunction, Response, Router } from "express";
-import User, { UserDocument } from "../models/user.js";
-import authenticateToken from "../middlewares/authenticateToken.middleware.js";
-import { AuthenticatedRequest } from "../models/requests/user.request.js";
+import User, { UserDocument } from "../models/user.ts";
+import authenticateToken from "../middlewares/authenticateToken.middleware.ts";
+import { AuthenticatedRequest } from "../models/requests/user.request.ts";
 
 const usersRouter = Router();
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { configureJSON } from "../utils/utils.js";
+import { configureJSON } from "../utils/utils.ts";
 
 mongoose.set("strictQuery", false);
 const deckSchema = new mongoose.Schema(

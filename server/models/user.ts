@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { configureJSON } from "../utils/utils.js";
+import { configureJSON } from "../utils/utils.ts";
 // Define the base user interface
 interface IUser {
   username: string;
