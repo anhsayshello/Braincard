@@ -177,7 +177,7 @@ export default function DeckList() {
                               </div>
                             </div>
                             <div className="text-black/60 text-sm leading-5">
-                              Mastered
+                              Mastered{" "}
                               {!Number.isNaN(masterdedCardsProgress)
                                 ? masterdedCardsProgress.toFixed(1)
                                 : 0}
