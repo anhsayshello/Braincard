@@ -8,6 +8,10 @@ import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary.tsx";
 
 const queryClient = new QueryClient();
 
+if (process.env.NODE_ENV === "production") {
+  console.log = () => {};
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
