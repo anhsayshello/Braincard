@@ -51,7 +51,7 @@ export default function DeckCards() {
     /* Loading */
   }
   if (isPending) {
-    return <DeckCardsSkeleton isPending={isPending} />;
+    return <DeckCardsSkeleton />;
   }
 
   return (
