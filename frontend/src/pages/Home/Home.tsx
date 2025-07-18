@@ -154,7 +154,7 @@ export default function Home() {
 
   return (
     <>
-      <Metadata title="Home" content="home" />
+      <Metadata title="Braincard" content="Braincard" />
       {/* Header */}
       <div className="flex justify-between items-center py-5">
         <div>
