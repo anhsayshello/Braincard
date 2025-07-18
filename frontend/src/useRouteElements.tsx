@@ -1,17 +1,20 @@
 import { Navigate, Outlet, useRoutes } from "react-router";
 import path from "./constants/path";
-import Home from "./pages/Home";
-import CardReview from "./pages/CardReview";
-import Layout from "./layouts/Layout";
-import Login from "./pages/Login";
+
+import { lazy } from "react";
 import { useAuthenticatedStore } from "./stores/useAuthenticatedStore";
-import Register from "./pages/Register";
-import DeckList from "./pages/DeckList";
-import DeckCards from "./pages/DeckCards";
-import AllCards from "./pages/AllCards";
-import Feedback from "./pages/Feedback";
-import Notifications from "./pages/Notifications";
-import Account from "./pages/Account";
+
+const CardReview = lazy(() => import("./pages/CardReview"));
+const Layout = lazy(() => import("./layouts/Layout"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const DeckList = lazy(() => import("./pages/DeckList"));
+const DeckCards = lazy(() => import("./pages/DeckCards"));
+const AllCards = lazy(() => import("./pages/AllCards"));
+const Feedback = lazy(() => import("./pages/Feedback"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const Account = lazy(() => import("./pages/Account"));
+const Home = lazy(() => import("./pages/Home"));
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthenticatedStore(
