@@ -113,6 +113,7 @@ export default function AppSidebar() {
     onSuccess: (data) => {
       console.log("log out", data);
       queryClient.removeQueries({ queryKey: ["unreadCount"] });
+      queryClient.removeQueries({ queryKey: ["stats"] });
       setUnreadNotifs(0);
     },
   });
