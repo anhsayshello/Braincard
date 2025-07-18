@@ -121,7 +121,7 @@ export default function CardReview() {
 
   return (
     <>
-      <Metadata title="Card Review" content="card-review" />
+      <Metadata title="Practice" content="practice" />
       <div className="flex items-center gap-3 mt-2">
         <div className="text-2xl font-semibold">Practice</div>
       </div>
