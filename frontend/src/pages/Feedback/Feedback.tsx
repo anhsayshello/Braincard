@@ -19,6 +19,7 @@ import Spinner from "@/components/Spinner";
 import handleFormError from "@/helpers/handleFormError";
 import { useCallback } from "react";
 import Metadata from "@/components/Metadata";
+import { toast } from "sonner";
 
 const feedbackTypes = [
   {
@@ -45,7 +46,11 @@ export default function Feedback() {
 
   const feedbackMutation = useMutation({
     mutationFn: feedbackApi.send,
-    onSuccess: (data) => console.log(data),
+    onSuccess: () => {
+      toast.success("Your feedback has been received!", {
+        description: <div className="text-black">Thank you for your help.</div>,
+      });
+    },
     onError: (error) => handleFormError(form, error, "content"),
   });
 
