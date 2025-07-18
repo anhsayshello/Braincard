@@ -31,7 +31,7 @@ loginRouter.post("/", async (request, response, next) => {
     });
     console.log(token);
 
-    response.status(200).send({
+    response.status(200).json({
       access_token: token,
       expires: "1d",
       user: {
