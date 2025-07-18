@@ -1,33 +1,32 @@
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-import stylistic from "@stylistic/eslint-plugin";
+import globals from "globals";
+import js from "@eslint/js";
+import stylisticJs from "@stylistic/eslint-plugin-js";
 
-export default tseslint.config({
-  files: ["**/*.ts"],
-  extends: [
-    eslint.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked,
-  ],
-  languageOptions: {
-    parserOptions: {
-      project: true,
-      tsconfigRootDir: import.meta.dirname,
+export default [
+  js.configs.recommended,
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      sourceType: "module",
+      globals: { ...globals.node },
+      ecmaVersion: "latest",
+    },
+    plugins: {
+      "@stylistic/js": stylisticJs,
+    },
+    rules: {
+      // "@stylistic/js/indent": ["error", 2],
+      // "@stylistic/js/linebreak-style": ["error", "unix"],
+      // "@stylistic/js/quotes": ["error", "single"],
+      // "@stylistic/js/semi": ["error", "never"],
+      eqeqeq: "error",
+      "no-trailing-spaces": "error",
+      "object-curly-spacing": ["error", "always"],
+      "arrow-spacing": ["error", { before: true, after: true }],
+      "no-console": "off",
     },
   },
-  plugins: {
-    "@stylistic": stylistic,
+  {
+    ignores: ["dist/**"],
   },
-  ignores: ["build/*"],
-  rules: {
-    "@stylistic/semi": "error",
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/no-unsafe-call": "off",
-    "@typescript-eslint/no-unsafe-member-access": "off",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/restrict-plus-operands": "off",
-    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-  },
-});
+];
