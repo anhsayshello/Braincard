@@ -139,11 +139,12 @@ export default function AppSidebar() {
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">@anhsayshello</h4>
                     <p className="text-[13px]">
-                      Flashcard project for studying using active recall and
-                      spaced repetition, developed by Duc Anh.
+                      Flashcard Project for Effective Learning: A study tool
+                      leveraging active recall and spaced repetition, developed
+                      by Duc Anh.
                     </p>
                     <div className="text-muted-foreground text-xs">
-                      Joined December 2021
+                      Released on July 18, 2025.
                     </div>
                   </div>
                 </HoverCardContent>
