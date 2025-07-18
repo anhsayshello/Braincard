@@ -133,7 +133,7 @@ export default function Notifications() {
           size="sm"
           variant="outline"
           className="cursor-pointer"
-          disabled={isReadAll}
+          disabled={isReadAll || !dataNotifications}
           onClick={handleReadAll}
         >
           <Check />
@@ -143,7 +143,7 @@ export default function Notifications() {
           size="sm"
           variant="outline"
           className="text-destructive hover:text-destructive cursor-pointer"
-          disabled={dataNotifications?.data.length === 0}
+          disabled={dataNotifications?.data.length === 0 || !dataNotifications}
           onClick={() => setOpenDeleteAllDialog(true)}
         >
           <X />
@@ -185,7 +185,9 @@ export default function Notifications() {
               </Card>
             </div>
           ))}
-        {dataNotifications?.data.length === 0 && <EmptyNotification />}
+        {(!dataNotifications || dataNotifications?.data.length === 0) && (
+          <EmptyNotification />
+        )}
       </div>
 
       {/* Open notificaiton */}
