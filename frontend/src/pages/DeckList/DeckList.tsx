@@ -29,6 +29,7 @@ import Tooltip from "@/components/Tooltip";
 import deckImg from "@/assets/images/CreateDeck.svg";
 import EmptyDeck from "./components/EmptyDeck";
 import Metadata from "@/components/Metadata";
+import DeckListSkeleton from "./components/DeckListSkeleton";
 
 export default function DeckList() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -36,7 +37,7 @@ export default function DeckList() {
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: dataDeck } = useQuery({
+  const { data: dataDeck, isPending } = useQuery({
     queryKey: ["decks"],
     queryFn: deckApi.getDecks,
   });
@@ -93,6 +94,10 @@ export default function DeckList() {
   );
 
   console.log(dataDeck, "data");
+
+  if (isPending) {
+    return <DeckListSkeleton />;
+  }
   return (
     <>
       <Metadata title="Deck List" content="deck-list" />
@@ -156,12 +161,6 @@ export default function DeckList() {
                                   {deck.newCards}
                                 </div>
                               </div>
-                              {/* <div className="flex items-center gap-1.5 text-sm leading-5">
-                              <div className="text-black/60 ">Forget</div>
-                              <div className="font-semibold">
-                                {deck.forgetCards}
-                              </div>
-                            </div> */}
                               <div className="flex items-center gap-1.5 text-sm leading-5">
                                 <div className="text-black/60 truncate">
                                   Cards to review
@@ -178,7 +177,7 @@ export default function DeckList() {
                               </div>
                             </div>
                             <div className="text-black/60 text-sm leading-5">
-                              Mastered{" "}
+                              Mastered
                               {!Number.isNaN(masterdedCardsProgress)
                                 ? masterdedCardsProgress.toFixed(1)
                                 : 0}
@@ -191,7 +190,7 @@ export default function DeckList() {
                   </motion.div>
                 );
               })}
-            {dataDeck?.data.length === 0 && <EmptyDeck />}
+            {!dataDeck && <EmptyDeck />}
 
             {/* Delete */}
             <DeleteDialog
