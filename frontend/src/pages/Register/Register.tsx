@@ -85,7 +85,7 @@ export default function Register() {
   );
   return (
     <>
-      <Metadata title="Register" content="register" />
+      <Metadata title="Sign up" content="sign-up" />
       <AlertDialog defaultOpen={true}>
         <AlertDialogPortal>
           <AlertDialogContent
