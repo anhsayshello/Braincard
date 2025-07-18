@@ -21,20 +21,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useAuthenticatedStore } from "@/stores/useAuthenticatedStore";
 import { useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Metadata from "@/components/Metadata";
 
 export default function Home() {
-  const isAuthenticated = useAuthenticatedStore(
-    (state) => state.isAuthenticated
-  );
   const isMobile = useIsMobile();
   const { data: dataUserStats } = useQuery({
     queryKey: ["stats"],
     queryFn: () => userApi.getStats(),
-    enabled: isAuthenticated,
   });
   console.log(dataUserStats);
   const stats = useMemo(() => {
