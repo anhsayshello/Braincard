@@ -190,7 +190,7 @@ export default function DeckList() {
                   </motion.div>
                 );
               })}
-            {!dataDeck && <EmptyDeck />}
+            {(!dataDeck || dataDeck.data.length === 0) && <EmptyDeck />}
 
             {/* Delete */}
             <DeleteDialog
