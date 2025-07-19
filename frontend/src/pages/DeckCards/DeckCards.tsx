@@ -56,7 +56,7 @@ export default function DeckCards() {
 
   return (
     <>
-      <Metadata title="Card List" content="card-list" />
+      <Metadata title="Card - braincard" content="card-list" />
       <div className="md:min-w-[450px]">
         <div className="flex items-center gap-4">
           <Link to={path.deck} className="p-1 mt-1">

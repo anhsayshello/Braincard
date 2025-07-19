@@ -124,7 +124,7 @@ export default function Notifications() {
 
   return (
     <>
-      <Metadata title="Notifications" content="notifs" />
+      <Metadata title="Notifications - braincard" content="notifs" />
       <div className="flex items-center gap-3 pt-5">
         <div className="text-2xl font-semibold">Notifications</div>
       </div>

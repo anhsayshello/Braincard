@@ -75,10 +75,10 @@ const items = [
     tooltip: "Feedback",
   },
   {
-    title: "Notification",
+    title: "Notifications",
     url: path.notifications,
     icon: Bell,
-    tooltip: "Notification",
+    tooltip: "Notifications",
   },
   {
     title: "Settings",
@@ -162,7 +162,7 @@ export default function AppSidebar() {
                       <Tooltip>
                         <TooltipTrigger>
                           {item.title !== "Settings" ? (
-                            item.title === "Notification" &&
+                            item.title === "Notifications" &&
                             unreadNotifs > 0 ? (
                               <div className="relative">
                                 <item.icon size={20} />

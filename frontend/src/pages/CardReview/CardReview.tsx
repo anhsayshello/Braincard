@@ -121,7 +121,7 @@ export default function CardReview() {
 
   return (
     <>
-      <Metadata title="Practice" content="practice" />
+      <Metadata title="Practice - braincard" content="practice" />
       <div className="flex items-center gap-3 mt-2">
         <div className="text-2xl font-semibold">Practice</div>
       </div>
@@ -148,10 +148,11 @@ export default function CardReview() {
                       </div>
 
                       {!show && (
-                        <div className="flex justify-center items-center">
+                        <div className="flex flex-col justify-center items-center">
                           <Button
                             onClick={() => setShow(true)}
                             variant="outline"
+                            className="mt-3 md:mt-4"
                           >
                             Show Answer
                           </Button>
@@ -160,7 +161,7 @@ export default function CardReview() {
                       {show && (
                         <>
                           {/* Back Card */}
-                          <div className="row-span-5 flex justify-center items-center border-b border-gray-300">
+                          <div className="row-span-4 md:row-span-5 flex justify-center items-center border-b border-gray-300">
                             <div className="text-lg text-center px-4">
                               {card.backCard}
                             </div>
@@ -182,11 +183,11 @@ export default function CardReview() {
                                     onMouseLeave={() => setHoveredStatus(null)}
                                     disabled={reviewCardMutation.isPending}
                                     className={`
-                        py-3 px-2 rounded-lg font-medium transition-all duration-200
-                        ${button.color} ${button.textColor}
-                        disabled:opacity-50 disabled:cursor-not-allowed
-                        transform hover:scale-105 active:scale-95
-                      `}
+                                    py-3 px-2 rounded-lg font-medium transition-all duration-200
+                                    ${button.color} ${button.textColor}
+                                    disabled:opacity-50 disabled:cursor-not-allowed
+                                    transform hover:scale-105 active:scale-95
+                                  `}
                                   >
                                     {button.label}
                                   </button>
@@ -208,7 +209,7 @@ export default function CardReview() {
                           </div>
 
                           {/* Card Info */}
-                          <div className="mt-4 flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-gray-500">
+                          <div className="row-span-1 mt-4 flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-gray-500">
                             <div className="flex items-center space-x-2">
                               <svg
                                 className="w-4 h-4"

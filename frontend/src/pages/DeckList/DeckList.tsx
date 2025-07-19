@@ -100,7 +100,7 @@ export default function DeckList() {
   }
   return (
     <>
-      <Metadata title="Deck List" content="deck-list" />
+      <Metadata title="Deck - braincard" content="deck-list" />
       <div>
         <div className="sticky top-0 pb-2">
           <div className="flex justify-between items-center bg-white/90">

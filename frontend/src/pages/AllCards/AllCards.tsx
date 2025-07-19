@@ -153,7 +153,7 @@ export default function AllCards() {
   const handleClearFilter = useCallback(() => {
     navigate({
       pathname: path.allCards,
-      search: createSearchParams(omit(queryConfig, ["filter"])).toString(),
+      search: createSearchParams(omit(queryConfig, ["filter", "q"])).toString(),
     });
   }, [navigate, queryConfig]);
 
@@ -161,7 +161,7 @@ export default function AllCards() {
 
   return (
     <>
-      <Metadata title="Seach" content="search" />
+      <Metadata title="Seach - braincard" content="search" />
       <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
         <SearchIcon className="size-4 shrink-0 opacity-50" />
         <Input
