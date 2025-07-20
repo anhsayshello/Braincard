@@ -113,7 +113,10 @@ export default function AllCards() {
   const handleTextSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log(e.target.value);
-      if (e.target.value.trim() !== queryConfig.q) {
+      if (
+        e.target.value.trim() !== queryConfig.q &&
+        e.target.value.trim() !== ""
+      ) {
         navigate({
           pathname: path.allCards,
           search: createSearchParams({
