@@ -1,6 +1,7 @@
 import { Router } from "express";
 import User from "../models/user.js";
 import authenticateToken from "../middlewares/authenticateToken.middleware.js";
+import userService from "../services/user.service.js";
 
 const usersRouter = Router();
 
@@ -9,20 +10,12 @@ usersRouter.get("/", async (_req, res) => {
   res.json(users);
 });
 
-usersRouter.use(authenticateToken);
-
-usersRouter.get("/stats", async (req, res, next) => {
+usersRouter.get("/stats", authenticateToken, async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    const stats = await user.getStats();
-
-    res.json({
-      ...stats,
-    });
+    const result = await userService.getStats(req.userId);
+    res.json(result);
   } catch (error) {
+    res.json({ error: error.message });
     next(error);
   }
 });

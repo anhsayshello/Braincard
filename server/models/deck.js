@@ -18,43 +18,8 @@ const deckSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
-
-deckSchema.virtual("totalCards", {
-  ref: "Card",
-  localField: "_id",
-  foreignField: "deckId",
-  count: true,
-});
-
-deckSchema.virtual("newCards", {
-  ref: "Card",
-  localField: "_id",
-  foreignField: "deckId",
-  match: { reviewCount: { $eq: 0 } },
-  count: true,
-});
-
-deckSchema.virtual("cardsInReview", {
-  ref: "Card",
-  localField: "_id",
-  foreignField: "deckId",
-  match: function () {
-    return { nextReview: { $lte: new Date() } };
-  },
-  count: true,
-});
-
-deckSchema.virtual("masteredCards", {
-  ref: "Card",
-  localField: "_id",
-  foreignField: "deckId",
-  match: { interval: { $gte: 14 } },
-  count: true,
-});
 
 configureJSON(deckSchema);
 

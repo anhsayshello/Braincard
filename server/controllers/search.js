@@ -7,9 +7,7 @@ import authenticateToken from "../middlewares/authenticateToken.middleware.js";
 
 const searchRouter = Router();
 
-searchRouter.use(authenticateToken);
-
-searchRouter.get("/cards/search", async (req, res, next) => {
+searchRouter.get("/cards/search", authenticateToken, async (req, res, next) => {
   try {
     const {
       q, // search query cho front và back card

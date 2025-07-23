@@ -15,8 +15,8 @@ const cardSchema = new mongoose.Schema(
     },
     status: {
       type: Number,
-      enum: [0, 1, 2, 3], // forget: 0, hard: 1, good: 2, easy: 3
-      default: 0, // forget
+      enum: [0, 1, 2, 3],
+      default: 0,
     },
     nextReview: {
       type: Date,

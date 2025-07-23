@@ -1,27 +1,14 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import { getTokenFrom } from "../utils/utils.js";
-import config from "../utils/config.js";
+import userService from "../services/user.service.js";
 
 const logoutRouter = express.Router();
 
-logoutRouter.post("/", (request, response, next) => {
+logoutRouter.post("/", async (req, res, next) => {
   try {
-    const token = getTokenFrom(request);
-
-    if (!token) {
-      return response.status(400).json({ error: "No token provided" });
-    }
-
-    const decodedToken = jwt.verify(token, config.SECRET);
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: "Invalid token" });
-    }
-
-    response.status(200).json({
-      message: "Logged out successfully",
-    });
+    const result = await userService.logout(req);
+    res.status(200).json(result);
   } catch (error) {
+    res.json({ error: error.message });
     next(error);
   }
 });
