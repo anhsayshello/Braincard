@@ -15,7 +15,6 @@ usersRouter.get("/stats", authenticateToken, async (req, res, next) => {
     const result = await userService.getStats(req.userId);
     res.json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });

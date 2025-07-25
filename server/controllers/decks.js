@@ -21,7 +21,6 @@ decksRouter.post("/", async (req, res, next) => {
     const result = await deckService.createDeck(name, req.userId);
     return res.status(201).json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });
@@ -33,7 +32,6 @@ decksRouter.put("/:id", async (req, res, next) => {
     const result = await deckService.updateDeck(id, req.userId, name);
     res.status(200).json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });
@@ -44,7 +42,6 @@ decksRouter.delete("/:id", async (req, res, next) => {
     await deckService.deleteDeck(id, req.userId);
     return res.status(204).end();
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });

@@ -34,7 +34,6 @@ notificationRoute.post("/", async (req, res, next) => {
     );
     return res.status(201).json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });
@@ -54,7 +53,6 @@ notificationRoute.put("/:id", async (req, res, next) => {
     const result = await notificationService.readOneNotification(id);
     return res.status(200).json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });
@@ -74,7 +72,6 @@ notificationRoute.delete("/:id", async (req, res, next) => {
     await notificationService.deleteNotificationById(id);
     return res.status(204).end();
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });

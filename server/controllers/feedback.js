@@ -8,10 +8,8 @@ feedbackRoute.post("/", authenticateToken, async (req, res, next) => {
   try {
     const { content, type } = req.body;
     const result = await feedbackService(req.userId, content, type);
-
     return res.status(201).json(result);
   } catch (error) {
-    res.json({ error: error.message });
     next(error);
   }
 });
