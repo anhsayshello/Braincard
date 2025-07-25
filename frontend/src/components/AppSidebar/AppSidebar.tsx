@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import path from "@/constants/path";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import classNames from "classnames";
@@ -47,7 +47,6 @@ import authApi from "@/apis/auth.api";
 import { useProfileStore } from "@/stores/useProfileStore";
 import { Badge } from "../ui/badge";
 import notificationApi from "@/apis/notification.api";
-import { useEffect, useState } from "react";
 
 const items = [
   {
@@ -90,7 +89,6 @@ const items = [
 
 export default function AppSidebar() {
   const { state } = useSidebar();
-  const [unreadNotifs, setUnreadNotifs] = useState<number>(0);
   const isAuthenticated = useAuthenticatedStore(
     (state) => state.isAuthenticated
   );
@@ -101,12 +99,6 @@ export default function AppSidebar() {
     enabled: isAuthenticated,
   });
 
-  useEffect(() => {
-    if (dataUnreadNotifications) {
-      setUnreadNotifs(dataUnreadNotifications?.data.unreadCount);
-    }
-  }, [dataUnreadNotifications]);
-
   const queryClient = useQueryClient();
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
@@ -114,10 +106,10 @@ export default function AppSidebar() {
       console.log("log out", data);
       queryClient.removeQueries({ queryKey: ["unreadCount"] });
       queryClient.removeQueries({ queryKey: ["stats"] });
-      setUnreadNotifs(0);
+      nagigate("/");
     },
   });
-
+  const nagigate = useNavigate();
   const handleLogout = () => {
     logoutMutation.mutate();
   };
@@ -163,14 +155,15 @@ export default function AppSidebar() {
                         <TooltipTrigger>
                           {item.title !== "Settings" ? (
                             item.title === "Notifications" &&
-                            unreadNotifs > 0 ? (
+                            dataUnreadNotifications &&
+                            dataUnreadNotifications?.data.unreadCount > 0 ? (
                               <div className="relative">
                                 <item.icon size={20} />
                                 <Badge
                                   variant="destructive"
                                   className="absolute w-4 h-4 -top-1.5 -right-1.5 text-[11px]"
                                 >
-                                  {unreadNotifs}
+                                  {dataUnreadNotifications?.data.unreadCount}
                                 </Badge>
                               </div>
                             ) : (
