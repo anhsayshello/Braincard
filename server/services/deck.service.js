@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Deck from "../models/deck.js";
 import User from "../models/user.js";
+import AppError from "../utils/apperror.js";
 
 const deckService = {
   async getAllDecks(userId) {
@@ -65,27 +66,34 @@ const deckService = {
         $sort: { createdAt: -1 },
       },
     ]);
-    return allDecks;
+    return allDecks.map((deck) => {
+      // eslint-disable-next-line no-unused-vars
+      const { _id, __v, ...rest } = deck;
+      return {
+        id: _id,
+        ...rest,
+      };
+    });
   },
 
   async createDeck(name, userId) {
     const user = await User.findById(userId);
 
     if (!user) {
-      throw new Error("userId missing or not valid");
+      throw new AppError("user not found", 404);
     }
 
     if (!name || name.trim().length === 0) {
-      throw new Error("Name is required and must be a valid name");
+      throw new AppError("Name is required and must be a valid name", 400);
     }
     if (await Deck.findOne({ name })) {
-      throw new Error("Name already exist");
+      throw new AppError("Name already exist", 400);
     }
 
     const trimmedName = name.trim();
 
     if (trimmedName.length > 255) {
-      throw new Error("Name must be less than 255 characters");
+      throw new AppError("Name must be less than 255 characters", 400);
     }
 
     console.log("Creating deck with name:", trimmedName);
@@ -106,14 +114,14 @@ const deckService = {
   },
 
   async updateDeck(deckId, userId, name) {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Name is required and must be a valid name");
-    }
     const trimmedName = name.trim();
+    if (!name || trimmedName.length === 0) {
+      throw new AppError("Name is required and must be a valid name", 400);
+    }
 
     const deck = await Deck.findOne({ _id: deckId, userId: userId });
     if (!deck) {
-      throw new Error("Deck not found");
+      throw new AppError("Deck not found", 404);
     }
 
     const existingDeck = await Deck.findOne({
@@ -122,7 +130,7 @@ const deckService = {
       userId: userId,
     });
     if (existingDeck) {
-      throw new Error("Name already exist");
+      throw new AppError("Name already exist", 400);
     }
 
     const updatedDeck = await Deck.findByIdAndUpdate(
@@ -132,10 +140,9 @@ const deckService = {
     );
 
     if (!updatedDeck) {
-      throw new Error("Failed to update deck");
+      throw new AppError("Deck not found", 404);
     }
 
-    // Get deck with stats using aggregate (consistent với getAllDecks)
     const deckWithStats = await Deck.aggregate([
       {
         $match: {
@@ -190,14 +197,10 @@ const deckService = {
   },
 
   async deleteDeck(deckId, userId) {
-    const deleteDeck = await Deck.findByIdAndDelete({
+    return await Deck.findOneAndDelete({
       _id: deckId,
       userId: userId,
     });
-
-    if (!deleteDeck) {
-      throw new Error("Deck not found");
-    }
   },
 };
 

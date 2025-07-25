@@ -1,5 +1,6 @@
 import Card from "../models/card.js";
 import Deck from "../models/deck.js";
+import AppError from "../utils/apperror.js";
 import {
   calculateNextReview,
   formatCardResponse,
@@ -8,11 +9,6 @@ import {
 
 const cardService = {
   async getAllCards(deckId, q = null, page = "1") {
-    const deck = await Deck.findById(deckId);
-    if (!deck) {
-      throw new Error("Deck not found");
-    }
-
     const searchQuery = {
       deckId: deckId,
     };
@@ -50,7 +46,7 @@ const cardService = {
   async getCardByDeckId(deckId) {
     const deck = await Deck.findById(deckId);
     if (!deck) {
-      throw new Error("Deck not found");
+      throw new AppError("Deck not found", 404);
     }
 
     const now = new Date();
@@ -72,12 +68,12 @@ const cardService = {
       !backCard ||
       backCard.trim() === ""
     ) {
-      throw new Error("Missing front or back card");
+      throw new AppError("Missing front or back card", 400);
     }
 
     const deck = await Deck.findById(deckId);
     if (!deck) {
-      throw new Error("Deck not found");
+      throw new AppError("Deck not found", 404);
     }
 
     const newCard = await Card.create({
@@ -98,16 +94,18 @@ const cardService = {
       (!frontCard || frontCard.trim() === "") &&
       (!backCard || backCard.trim() === "")
     ) {
-      throw new Error("Missing front or back card");
+      throw new AppError("Missing front or back card", 400);
     }
 
     const card = await Card.findById(cardId);
     if (!card) {
-      throw new Error("Deck not found");
+      throw new AppError("Card not found", 404);
     }
+
     if (!card.deckId.equals(deckId)) {
-      throw new Error("Card doesn't belong to this deck");
+      throw new AppError("Card doesn't belong to this deck", 403);
     }
+
     card.frontCard = frontCard;
     card.backCard = backCard;
     await card.save();
@@ -117,16 +115,16 @@ const cardService = {
 
   async reviewCard(deckId, cardId, status) {
     if (status === undefined || !isValidStatus(status)) {
-      throw new Error("Invalid status");
+      throw new AppError("Invalid status", 400);
     }
 
     const card = await Card.findById(cardId);
     if (!card) {
-      throw new Error("Card not found");
+      throw new AppError("Card not found", 404);
     }
 
     if (!card.deckId.equals(deckId)) {
-      throw new Error("Card doesn't belong to this deck");
+      throw new AppError("Card doesn't belong to this deck", 403);
     }
 
     const numericStatus = Number(status);
@@ -151,18 +149,10 @@ const cardService = {
   },
 
   async deleteCard(deckId, cardIds) {
-    if (!cardIds || !Array.isArray(cardIds)) {
-      throw new Error("cardIds must be an array");
-    }
-
-    const result = await Card.deleteMany({
+    return await Card.deleteMany({
       _id: { $in: cardIds },
       deckId: deckId,
     });
-
-    if (result.deletedCount === 0) {
-      throw new Error("No cards found to delete");
-    }
   },
 };
 export default cardService;

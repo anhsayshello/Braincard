@@ -1,5 +1,6 @@
 import Notification from "../models/notification.js";
 import User from "../models/user.js";
+import AppError from "../utils/apperror.js";
 
 const notificationService = {
   async getAllNotifications(userId) {
@@ -22,11 +23,11 @@ const notificationService = {
   async createNotification(userId, title, content) {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("userId missing or not valid");
+      throw new AppError("User not found", 404);
     }
 
     if (!title || title.trim() === "" || !content || content.trim() === "") {
-      throw new Error("title or content is missing");
+      throw new AppError("title or content is missing", 400);
     }
     const newNotification = await Notification.create({
       title,
@@ -47,7 +48,7 @@ const notificationService = {
       { new: true, runValidators: true }
     );
     if (!updateNotification) {
-      throw new Error("Notification not found");
+      throw new AppError("Notification not found", 404);
     }
     return updateNotification;
   },
@@ -57,9 +58,7 @@ const notificationService = {
       { isRead: false },
       { isRead: true }
     );
-    if (!updateAllNotifications) {
-      throw new Error("Notification not found");
-    }
+
     return {
       message: `Successfully marked ${updateAllNotifications.modifiedCount} notification(s) as read`,
       matchedCount: updateAllNotifications.matchedCount,
@@ -68,10 +67,7 @@ const notificationService = {
   },
 
   async deleteNotificationById(id) {
-    const deleteResult = await Notification.findByIdAndDelete(id);
-    if (!deleteResult) {
-      throw new Error("Notification not found");
-    }
+    return await Notification.findByIdAndDelete(id);
   },
 
   async deleteAllNotifications() {
