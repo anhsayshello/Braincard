@@ -154,11 +154,11 @@ export default function Home() {
 
   return (
     <>
-      <Metadata title="Braincard" content="Braincard" />
+      <Metadata title="BrainCard" content="Braincard" />
       {/* Header */}
       <div className="flex justify-between items-center py-5">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">FlashCards</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">BrainCards</h1>
           <p className="text-gray-600 mt-1">
             Master your knowledge, one card at a time
           </p>

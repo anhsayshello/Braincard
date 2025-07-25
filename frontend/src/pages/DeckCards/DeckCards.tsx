@@ -47,16 +47,13 @@ export default function DeckCards() {
   );
   console.log(dataCards);
 
-  {
-    /* Loading */
-  }
   if (isPending) {
     return <DeckCardsSkeleton />;
   }
 
   return (
     <>
-      <Metadata title="Card - braincard" content="card-list" />
+      <Metadata title="Card | BrainCard" content="card-list" />
       <div className="md:min-w-[450px]">
         <div className="flex items-center gap-4">
           <Link to={path.deck} className="p-1 mt-1">

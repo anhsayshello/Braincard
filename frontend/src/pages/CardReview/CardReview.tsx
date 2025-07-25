@@ -63,31 +63,23 @@ export default function CardReview() {
     if (dataCardsReview?.data) {
       const currentTotal = dataCardsReview.data.length;
 
-      // Nếu là lần đầu load data, lưu tổng số ban đầu
       if (initialTotalRef.current === 0) {
         initialTotalRef.current = currentTotal;
         setProgress(0);
       } else {
-        // Tính số card đã review = tổng ban đầu - số card còn lại
         const reviewed = initialTotalRef.current - currentTotal;
 
-        // Tính progress
         const progressPercentage = (reviewed / initialTotalRef.current) * 100;
         setProgress(progressPercentage);
       }
     }
   }, [dataCardsReview]);
 
-  // Reset khi thay đổi deck
   useEffect(() => {
     initialTotalRef.current = 0;
     setProgress(0);
   }, [deckId]);
 
-  // automatically return previous deck
-  // const navigate = useNavigate();
-
-  // Mutation để review card
   const reviewCardMutation = useMutation({
     mutationFn: cardApi.reviewCard,
     onSuccess: () => {
@@ -108,7 +100,6 @@ export default function CardReview() {
     [deckId, reviewCardMutation]
   );
 
-  // Tính thời gian review cho từng button khi hover
   const getPreviewTime = useCallback((status: CardStatus, card: CardType) => {
     const { nextReview } = calculateNextReviewTime(
       card.status,
@@ -121,7 +112,7 @@ export default function CardReview() {
 
   return (
     <>
-      <Metadata title="Practice - braincard" content="practice" />
+      <Metadata title="Practice | BrainCard" content="practice" />
       <div className="flex items-center gap-3 mt-2">
         <div className="text-2xl font-semibold">Practice</div>
       </div>

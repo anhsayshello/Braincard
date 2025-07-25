@@ -37,7 +37,7 @@ export default function Account() {
   );
   return (
     <>
-      <Metadata title="Account - braincard" content="account" />
+      <Metadata title="Account | BrainCard" content="account" />
       <div className="py-10">
         <Card className="px-4 ">
           <div className="flex items-center gap-4">

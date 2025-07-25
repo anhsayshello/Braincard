@@ -164,7 +164,7 @@ export default function AllCards() {
 
   return (
     <>
-      <Metadata title="Seach - braincard" content="search" />
+      <Metadata title="Seach | BrainCard" content="search" />
       <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
         <SearchIcon className="size-4 shrink-0 opacity-50" />
         <Input

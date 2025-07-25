@@ -64,7 +64,7 @@ export default function Feedback() {
 
   return (
     <>
-      <Metadata title="Feedback - braincard" content="feedback" />
+      <Metadata title="Feedback | BrainCard" content="feedback" />
       <div className="flex items-center gap-3 pt-5">
         <div className="text-2xl font-semibold">Feedback</div>
       </div>
