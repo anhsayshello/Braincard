@@ -5,7 +5,7 @@ const path = {
   deck: "/decks",
   cards: "/decks/:deckId/cards",
   cardReview: "/decks/:deckId/cards/review",
-  allCards: "/cards/search",
+  allCards: "/search",
   feedback: "/feedback",
   notifications: "/notifications",
   notification: "/notifications/:notificationId",
