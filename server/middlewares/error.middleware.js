@@ -1,4 +1,9 @@
+import AppError from "../utils/apperror.js";
+
 export default function errorHandler(error, _req, res, next) {
+  if (error instanceof AppError || error.name === "AppError") {
+    return res.status(error.status).json({ error: error.message });
+  }
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
