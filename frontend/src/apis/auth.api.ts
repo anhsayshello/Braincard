@@ -1,9 +1,9 @@
 import AuthResponse from "@/types/auth.type";
 import http from "@/utils/http";
 
-export const URL_LOGIN = "login";
-export const URL_REGISTER = "register";
-export const URL_LOGOUT = "logout";
+export const URL_LOGIN = "auth/login";
+export const URL_REGISTER = "auth/register";
+export const URL_LOGOUT = "auth/logout";
 
 const authApi = {
   register: (body: { name: string; username: string; password: string }) =>
