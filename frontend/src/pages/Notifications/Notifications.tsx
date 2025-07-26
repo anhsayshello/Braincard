@@ -155,7 +155,7 @@ export default function Notifications() {
           dataNotifications.data.map((notification) => (
             <div className="mb-3" key={notification.id}>
               <Card
-                className={classNames("", {
+                className={classNames("gap-2", {
                   "border-blue-300": !notification.isRead,
                 })}
               >
