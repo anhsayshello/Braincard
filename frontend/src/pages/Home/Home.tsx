@@ -194,10 +194,10 @@ export default function Home() {
             <TabsTrigger value="bar">Bar Chart</TabsTrigger>
             <TabsTrigger value="pie">Pie Chart</TabsTrigger>
           </TabsList>
-          <TabsContent value="bar">
+          <TabsContent value="bar" className="mt-3 mb-2">
             <ChartContainer
               config={barChartConfig}
-              className="min-h-[200px] w-full"
+              className="max-h-[50vh] xl:max-h-[58vh] 2xl:min-h-[60vh] w-full"
             >
               <BarChart accessibilityLayer data={barData}>
                 <CartesianGrid vertical={false} />
@@ -216,19 +216,22 @@ export default function Home() {
               </BarChart>
             </ChartContainer>
           </TabsContent>
-          <TabsContent value="pie">
+          <TabsContent
+            value="pie"
+            className="flex items-center justify-center my-4 xl:my-20 2xl:my-24"
+          >
             <ChartContainer
               config={barChartConfig}
-              className="min-h-[270px] sm:min-h-[180px] w-full"
+              className="min-h-[270px] sm:max-h-50 w-full"
             >
               <PieChart>
                 <Pie
                   data={pieData}
-                  labelLine={false}
+                  labelLine={true}
                   label={({ name, percent }) =>
                     `${name}: ${(percent * 100).toFixed(2)}%`
                   }
-                  outerRadius={isMobile ? 70 : 100}
+                  innerRadius={isMobile ? 60 : 70}
                   dataKey="value"
                   className="text-sm"
                 >
