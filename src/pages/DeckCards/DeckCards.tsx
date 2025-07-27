@@ -35,13 +35,15 @@ export default function DeckCards() {
 
   const handleTextSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      navigate({
-        pathname: `/decks/${deckId}/cards`,
-        search: createSearchParams({
-          ...queryConfig,
-          q: e.target.value.trim(),
-        }).toString(),
-      });
+      if (e.target.value.trim() !== queryConfig.q) {
+        navigate({
+          pathname: `/decks/${deckId}/cards`,
+          search: createSearchParams({
+            ...queryConfig,
+            q: e.target.value.trim(),
+          }).toString(),
+        });
+      }
     },
     [queryConfig, navigate, deckId]
   );
