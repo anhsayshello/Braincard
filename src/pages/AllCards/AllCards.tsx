@@ -32,7 +32,7 @@ import CardList from "@/components/CardList";
 import Pagination from "@/components/Pagination";
 import AllCardsSkeleton from "./components/AllCardsSkeleton";
 import allCardsApi from "@/apis/allCards.api";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import Metadata from "@/components/Metadata";
 
 const filters = [
@@ -102,6 +102,7 @@ export default function AllCards() {
   const { filter: currentFilter, sortBy, sortOrder } = useQueryConfig();
   const queryConfig = useQueryConfig();
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { data: dataAllCards, isPending } = useQuery({
     queryKey: ["allCards", queryConfig],
     queryFn: () => allCardsApi.search(queryConfig as CardQueryParams),
@@ -113,10 +114,7 @@ export default function AllCards() {
   const handleTextSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log(e.target.value);
-      if (
-        e.target.value.trim() !== queryConfig.q &&
-        e.target.value.trim() !== ""
-      ) {
+      if (e.target.value.trim() !== queryConfig.q) {
         navigate({
           pathname: path.allCards,
           search: createSearchParams({
@@ -154,6 +152,9 @@ export default function AllCards() {
   );
 
   const handleClearFilter = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
     navigate({
       pathname: path.allCards,
       search: createSearchParams(omit(queryConfig, ["filter", "q"])).toString(),
@@ -168,6 +169,7 @@ export default function AllCards() {
       <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
         <SearchIcon className="size-4 shrink-0 opacity-50" />
         <Input
+          ref={inputRef}
           type="text"
           placeholder="Enter a word to search"
           className="!border-0 !outline-0 !ring-0 !shadow-none focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!ring-0 aria-invalid:!border-0"
