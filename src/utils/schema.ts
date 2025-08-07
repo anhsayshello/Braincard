@@ -82,5 +82,17 @@ export const feedbackSchema = z.object({
       message: "message must not be longer than 200 characters.",
     }),
 });
-
 export type FeedbackSchema = z.infer<typeof feedbackSchema>;
+
+export const userSchema = z.object({
+  name: z
+    .string()
+    .nonempty("name is required")
+    .min(5, {
+      message: "name must be at least 5 characters.",
+    })
+    .max(20, {
+      message: "name must not exceed 20 characters.",
+    }),
+});
+export type UserSchema = z.infer<typeof userSchema>;
