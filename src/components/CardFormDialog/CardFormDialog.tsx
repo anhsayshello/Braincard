@@ -32,9 +32,9 @@ import dateFormatter from "@/helpers/dateFormatter";
 
 interface CardFormDialogProps {
   mode: "create" | "update";
-  card?: Card; // Chỉ cần khi mode = 'update'
-  trigger?: React.ReactNode; // Custom trigger button
-  onSuccess?: () => void; // Callback sau khi thành công
+  card?: Card;
+  trigger?: React.ReactNode;
+  onSuccess?: () => void;
   externalOpen?: boolean;
   setExternalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -56,12 +56,11 @@ export function CardFormDialog({
   const form = useForm<CardSchema>({
     resolver: zodResolver(cardSchema),
     defaultValues: {
-      frontCard: card?.frontCard || "",
-      backCard: card?.backCard || "",
+      frontCard: card?.frontCard ?? "",
+      backCard: card?.backCard ?? "",
     },
   });
 
-  // Reset form khi card thay đổi (cho update mode)
   useEffect(() => {
     if (mode === "update" && card) {
       form.reset({
@@ -71,12 +70,10 @@ export function CardFormDialog({
     }
   }, [card, mode, form]);
 
-  // Mutation cho create card
   const createCardMutation = useMutation({
     mutationFn: cardApi.createCard,
   });
 
-  // Mutation cho update card
   const updateCardMutation = useMutation({
     mutationFn: cardApi.updateCard,
   });
@@ -242,7 +239,6 @@ export function CardFormDialog({
   );
 }
 
-// Export các component riêng biệt để dễ sử dụng
 export function CreateCard(props: Omit<CardFormDialogProps, "mode">) {
   return <CardFormDialog {...props} mode="create" />;
 }

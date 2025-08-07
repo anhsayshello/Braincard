@@ -7,7 +7,6 @@ import {
   setProfileToLS,
 } from "./auth";
 import { URL_LOGIN, URL_LOGOUT, URL_REGISTER } from "@/apis/auth.api";
-import { toast } from "sonner";
 import AuthResponse from "@/types/auth.type";
 
 class Http {
@@ -50,10 +49,10 @@ class Http {
       function (error) {
         if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data: any | undefined = error.response?.data;
+          // const data: any | undefined = error.response?.data;
           console.log(error);
-          const message = data?.message || error.message;
-          toast.error(data.error || message);
+          // const message = data?.message || error.message;
+          // toast.error(data.error || message);
         }
         if (error.response?.status === HttpStatusCode.Unauthorized) {
           clearLS();

@@ -30,9 +30,9 @@ import handleFormError from "@/helpers/handleFormError";
 
 interface DeckFormDialogProps {
   mode: "create" | "update";
-  deck?: Deck; // Chỉ cần khi mode = 'update'
-  trigger?: React.ReactNode; // Custom trigger button
-  onSuccess?: () => void; // Callback sau khi thành công
+  deck?: Deck;
+  trigger?: React.ReactNode;
+  onSuccess?: () => void;
   externalOpen?: boolean;
   setExternalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
