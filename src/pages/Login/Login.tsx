@@ -28,10 +28,12 @@ import { useAuthenticatedStore } from "@/stores/useAuthenticatedStore";
 import { House } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { useProfileStore } from "@/stores/useProfileStore";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Metadata from "@/components/Metadata";
+import { AxiosError } from "axios";
 
 export default function Login() {
+  const [error, setError] = useState("");
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -39,6 +41,7 @@ export default function Login() {
       password: "",
     },
   });
+  console.log(form);
 
   const setIsAuthenticated = useAuthenticatedStore(
     (state) => state.setIsAuthenticated
@@ -53,6 +56,11 @@ export default function Login() {
       setProfile(data.data.user);
       navigate("/");
     },
+    onError: (error: AxiosError<{ error: string }>) => {
+      if (error.response) {
+        setError(error.response.data.error);
+      }
+    },
   });
 
   const onSubmit = useCallback(
@@ -65,7 +73,7 @@ export default function Login() {
     <>
       <Metadata title="Login" content="login" />
       <div className="fixed inset-0 flex items-center justify-center p-6 z-20 bg-[oklab(0_0_0_/_0.5)]">
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm gap-5">
           <Link to={path.home} className="flex items-center justify-center">
             <House size={18} />
           </Link>
@@ -143,6 +151,7 @@ export default function Login() {
                 </div>
               </form>
             </Form>
+            <div className="text-red-500 text-sm mt-3">{error}</div>
           </CardContent>
           <CardFooter className="flex-col gap-2 pt-3.5">
             <Button
