@@ -44,9 +44,9 @@ import { useAuthenticatedStore } from "@/stores/useAuthenticatedStore";
 import { Button } from "../ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authApi from "@/apis/auth.api";
-import { useProfileStore } from "@/stores/useProfileStore";
 import { Badge } from "../ui/badge";
 import notificationApi from "@/apis/notification.api";
+import useUserQuery from "@/hooks/useUserQuery";
 
 const items = [
   {
@@ -92,12 +92,16 @@ export default function AppSidebar() {
   const isAuthenticated = useAuthenticatedStore(
     (state) => state.isAuthenticated
   );
-  const profile = useProfileStore((state) => state.profile);
   const { data: dataUnreadNotifications } = useQuery({
     queryKey: ["unreadCount"],
     queryFn: () => notificationApi.getUnRead(),
     enabled: isAuthenticated,
   });
+  console.log("re-render");
+
+  const { data: dataUser } = useUserQuery();
+  const name = dataUser?.data?.name ?? "unnamed";
+  console.log(dataUser);
 
   const queryClient = useQueryClient();
   const logoutMutation = useMutation({
@@ -206,7 +210,7 @@ export default function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
-                    <User2 /> {profile ? profile.name : "unnamed"}
+                    <User2 /> {name}
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
