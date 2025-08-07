@@ -19,9 +19,11 @@ import Spinner from "@/components/Spinner";
 import AppDropDownMenu from "@/components/AppDropDownMenu";
 import { toast } from "sonner";
 import { motion } from "motion/react";
-import CardDetail from "../../components/CardDetail";
 import EmptyDeckCard from "@/pages/DeckCards/components/EmptyDeckCard";
 import CardNotFound from "@/pages/AllCards/components/CardNotFound";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import CardItem from "../CardItem";
 
 interface Props {
   dataCards: CardType[];
@@ -112,22 +114,21 @@ export default function CardList({ dataCards, isAllCards = true }: Props) {
             <CardNotFound />
           )
         ) : (
-          dataCards &&
-          dataCards.map((card, index) => (
+          ""
+        )}
+        {dataCards &&
+          dataCards.map((card) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 0.25,
-                delay: index * 0.04,
-                ease: "easeOut",
+                duration: 0.05,
+                ease: "linear",
               }}
-              whileHover={{
-                rotate: 1,
-                transition: { duration: 0.3 },
+              whileTap={{
+                scale: 0.95,
               }}
-              whileTap={{ scale: 0.9, transition: { duration: 0.2 } }}
             >
               <Card className="mb-1">
                 <CardHeader className="flex justify-between">
@@ -169,16 +170,22 @@ export default function CardList({ dataCards, isAllCards = true }: Props) {
                 </button>
               </Card>
             </motion.div>
-          ))
-        )}
+          ))}
       </div>
 
-      {/* Open card detail */}
-      <CardDetail
-        card={selectedCard as CardType}
-        externalOpen={openCardDetail}
-        setExternalOpen={setOpenCardDetail}
-      />
+      {/* Open card dialog */}
+
+      <Dialog open={openCardDetail} onOpenChange={setOpenCardDetail}>
+        <DialogContent showCloseButton={false} aria-describedby={undefined}>
+          <VisuallyHidden asChild>
+            <DialogTitle></DialogTitle>
+          </VisuallyHidden>
+          <CardItem
+            card={selectedCard as CardType}
+            onClick={() => setOpenCardDetail(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Delete */}
       <DeleteDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
