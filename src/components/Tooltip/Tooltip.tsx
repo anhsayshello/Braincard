@@ -13,7 +13,9 @@ interface Props {
 export default function Tooltip({ trigger, content }: Props) {
   return (
     <TooltipWrapper>
-      <TooltipTrigger className="hover:opacity-60">{trigger}</TooltipTrigger>
+      <TooltipTrigger className="hover:opacity-60 cursor-pointer">
+        {trigger}
+      </TooltipTrigger>
       <TooltipContent>
         <p>{content}</p>
       </TooltipContent>

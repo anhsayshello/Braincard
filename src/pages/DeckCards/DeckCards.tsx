@@ -56,7 +56,7 @@ export default function DeckCards() {
   return (
     <>
       <Metadata title="Card | BrainCard" content="card-list" />
-      <div className="md:min-w-[450px]">
+      <>
         <div className="flex items-center gap-4">
           <Link to={path.deck} className="p-1 mt-1">
             <Tooltip
@@ -89,7 +89,7 @@ export default function DeckCards() {
             />
           </div>
         </div>
-        <div className="flex items-center flex-wrap md:justify-between gap-3 mt-5 mb-4.5">
+        <div className="flex items-center flex-wrap md:justify-between gap-3 my-5">
           <div className="flex items-center gap-3 flex-wrap">
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               <svg
@@ -153,11 +153,19 @@ export default function DeckCards() {
             isAllCards={false}
           />
         </div>
-        <CardList
-          dataCards={dataCards ? dataCards.data.cards : []}
-          isAllCards={false}
-        />
-      </div>
+        <div
+          className={
+            dataCards?.data.cards.length === 0
+              ? "grow flex items-center justify-center"
+              : ""
+          }
+        >
+          <CardList
+            dataCards={dataCards ? dataCards.data.cards : []}
+            isAllCards={false}
+          />
+        </div>
+      </>
     </>
   );
 }

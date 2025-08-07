@@ -150,7 +150,7 @@ export default function Notifications() {
           Clear all
         </Button>
       </div>
-      <div className="mt-4">
+      <div className="-mt-20 grow flex items-center justify-center">
         {dataNotifications &&
           dataNotifications.data.map((notification) => (
             <div className="mb-3" key={notification.id}>

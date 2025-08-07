@@ -68,7 +68,7 @@ export default function Feedback() {
       <div className="flex items-center gap-3 pt-5">
         <div className="text-2xl font-semibold">Feedback</div>
       </div>
-      <div className="flex items-center justify-center mt-4 lg:mt-6">
+      <div className="flex items-center justify-center mt-4 md:mt-8 xl:grow xl:-mt-20">
         <div className="grid w-full max-w-2xl items-center gap-4">
           <div className="w-full rounded-lg border px-5 py-4 text-sm">
             <div className="line-clamp-1 min-h-4 font-medium tracking-tight">

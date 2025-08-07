@@ -6,7 +6,6 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  Legend,
   Pie,
   PieChart,
   XAxis,
@@ -99,7 +98,7 @@ export default function Home() {
     [stats]
   );
 
-  const barChartConfig = {
+  const chartConfig = {
     difficult: {
       label: "Difficult",
     },
@@ -107,7 +106,7 @@ export default function Home() {
       label: "Studying",
     },
     notLearning: {
-      label: "Not Lrng",
+      label: "Not Learning",
     },
     mastered: {
       label: "Mastered",
@@ -126,27 +125,28 @@ export default function Home() {
     ],
     [stats]
   );
+
   const pieData = useMemo(
     () => [
       {
-        name: "Difficult",
+        name: "difficult",
         value: stats.difficultCards,
-        color: "#ff6b6b",
+        fill: "#ff6b6b",
       },
       {
-        name: "Studying",
+        name: "studying",
         value: stats.cardsStudying,
-        color: "#4ecdc4",
+        fill: "#4ecdc4",
       },
       {
-        name: "Not Learning",
+        name: "notLearning",
         value: stats.cardsNotLearning,
-        color: "#ffab91",
+        fill: "#ffab91",
       },
       {
-        name: "Mastered",
+        name: "mastered",
         value: stats.masteredCards,
-        color: "#45b7d1",
+        fill: "#45b7d1",
       },
     ],
     [stats]
@@ -155,7 +155,6 @@ export default function Home() {
   return (
     <>
       <Metadata title="BrainCard" content="Braincard" />
-      {/* Header */}
       <div className="flex justify-between items-center py-5">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">BrainCards</h1>
@@ -166,7 +165,6 @@ export default function Home() {
       </div>
 
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2.5">
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           {statsCards.map((stat, index) => (
             <div
@@ -176,7 +174,7 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900">
                     {stat.value}
                   </p>
                 </div>
@@ -188,17 +186,17 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <div className="mt-3">
+      <div className="grow flex">
         <Tabs defaultValue="bar" className="w-full">
           <TabsList>
             <TabsTrigger value="bar">Bar Chart</TabsTrigger>
             <TabsTrigger value="pie">Pie Chart</TabsTrigger>
           </TabsList>
-          <TabsContent value="bar" className="mt-3 mb-2">
-            <ChartContainer
-              config={barChartConfig}
-              className="max-h-[50vh] xl:max-h-[58vh] 2xl:min-h-[60vh] w-full"
-            >
+          <TabsContent
+            value="bar"
+            className="mt-3 mb-2 md:flex md:justify-center"
+          >
+            <ChartContainer config={chartConfig}>
               <BarChart accessibilityLayer data={barData}>
                 <CartesianGrid vertical={false} />
                 <XAxis
@@ -216,31 +214,26 @@ export default function Home() {
               </BarChart>
             </ChartContainer>
           </TabsContent>
-          <TabsContent
-            value="pie"
-            className="flex items-center justify-center my-4 xl:my-20 2xl:my-24"
-          >
+          <TabsContent value="pie" className="flex items-center justify-center">
             <ChartContainer
-              config={barChartConfig}
-              className="min-h-[270px] sm:max-h-50 w-full"
+              config={chartConfig}
+              className="mb-5 xl:-mt-10 min-h-[270px]"
             >
               <PieChart>
                 <Pie
                   data={pieData}
-                  labelLine={true}
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(2)}%`
-                  }
                   innerRadius={isMobile ? 60 : 70}
                   dataKey="value"
-                  className="text-sm"
                 >
                   {pieData.map((pie, index) => (
-                    <Cell key={`cell-${index}`} fill={pie.color} />
+                    <Cell key={`cell-${index}`} fill={pie.fill} />
                   ))}
                 </Pie>
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <ChartLegend content={<ChartLegendContent nameKey="name" />} />
               </PieChart>
             </ChartContainer>
           </TabsContent>

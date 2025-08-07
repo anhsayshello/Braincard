@@ -6,7 +6,7 @@ export default function Layout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div className="container">
+      <div className="container flex flex-col h-screen">
         <main>
           <SidebarTrigger />
         </main>

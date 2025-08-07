@@ -32,7 +32,7 @@ export default function AllCardsSkeleton({
       {isPending && (
         <div>
           {/* Search Input Section */}
-          <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
+          <div className="flex h-9 items-center gap-2 border-b px-5 mt-3">
             <SearchIcon className="size-4 shrink-0 opacity-50" />
             <Input
               type="email"

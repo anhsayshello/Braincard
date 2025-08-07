@@ -131,10 +131,9 @@ export default function DeckList() {
                   <motion.div
                     key={deck.id}
                     whileHover={{
-                      y: -3,
+                      y: -1,
                     }}
                     whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
                   >
                     <div className="mb-3">
                       <Card>
