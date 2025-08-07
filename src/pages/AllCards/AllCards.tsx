@@ -157,7 +157,9 @@ export default function AllCards() {
     }
     navigate({
       pathname: path.allCards,
-      search: createSearchParams(omit(queryConfig, ["filter", "q"])).toString(),
+      search: createSearchParams(
+        omit({ ...queryConfig, sortBy: "created-at" }, ["filter", "q"])
+      ).toString(),
     });
   }, [navigate, queryConfig]);
 
@@ -166,7 +168,7 @@ export default function AllCards() {
   return (
     <>
       <Metadata title="Seach | BrainCard" content="search" />
-      <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
+      <div className="flex h-9 items-center gap-2 border-b px-5 mt-3">
         <SearchIcon className="size-4 shrink-0 opacity-50" />
         <Input
           ref={inputRef}
@@ -176,7 +178,7 @@ export default function AllCards() {
           onChange={handleTextSearch}
         />
       </div>
-      <div className="flex items-center justify-between mt-5 flex-wrap gap-2.5">
+      <div className="flex items-center justify-between my-5 flex-wrap gap-2.5">
         <div className="flex items-center flex-wrap gap-2.5">
           <div className="flex items-center gap-3 flex-wrap">
             {filters.map((filter, idx) => {
@@ -250,7 +252,13 @@ export default function AllCards() {
           }
         />
       </div>
-      <div className="mt-4.5">
+      <div
+        className={
+          dataAllCards?.data.cards.length === 0
+            ? "grow flex items-center justify-center"
+            : ""
+        }
+      >
         <CardList dataCards={dataAllCards ? dataAllCards.data.cards : []} />
       </div>
     </>
