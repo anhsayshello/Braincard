@@ -53,7 +53,7 @@ export default function DeckFormDialog({
   const form = useForm<DeckSchema>({
     resolver: zodResolver(deckSchema),
     defaultValues: {
-      name: deck?.name || "",
+      name: "",
     },
   });
 

@@ -4,7 +4,6 @@ import { Card as CardType, CardStatus } from "@/types/card.type";
 import { calculateNextReviewTime, formatTimeUntilReview } from "@/utils/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { Volume2 } from "lucide-react";
 
 interface Props {
   card: CardType;
@@ -50,64 +49,66 @@ export default function CardDetailItem({ card, onClick }: Props) {
     },
     [card]
   );
-  const handleSpeech = useCallback(() => {
-    speechSynthesis.speak(new SpeechSynthesisUtterance(card.frontCard));
-  }, [card]);
+  // const handleSpeech = useCallback(() => {
+  //   speechSynthesis.speak(new SpeechSynthesisUtterance(card.frontCard));
+  // }, [card]);
 
-  if (!card) {
-    return null;
-  }
+  // if (!card) {
+  //   return null;
+  // }
 
   const reviewButtons = [
     {
       status: CARD_STATUS.FORGET,
       label: "Forget",
-      color: "bg-red-500 hover:bg-red-600",
+      color: "bg-[#ff6b6b] hover:bg-[#ff5252]",
       textColor: "text-white",
     },
     {
       status: CARD_STATUS.HARD,
       label: "Hard",
-      color: "bg-orange-500 hover:bg-orange-600",
+      color: "bg-[#ffab91] hover:bg-[#ff8a65]",
       textColor: "text-white",
     },
     {
       status: CARD_STATUS.GOOD,
       label: "Good",
-      color: "bg-green-500 hover:bg-green-600",
+      color: "bg-[#4ecdc4] hover:bg-[#26a69a]",
       textColor: "text-white",
     },
     {
       status: CARD_STATUS.EASY,
       label: "Easy",
-      color: "bg-blue-500 hover:bg-blue-600",
+      color: "bg-[#45b7d1] hover:bg-[#29b6f6]",
       textColor: "text-white",
     },
   ];
-
   return (
-    <div className="grid grid-rows-10 lg:grid-rows-11">
+    <div className="flex flex-col">
       {/* Front Card */}
-      <div className="row-span-2 flex justify-center items-end border-b border-gray-200">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="font-semibold text-xl text-center">
+      <div className="h-30 pb-2 overflow-y-scroll flex justify-center border-b border-gray-200">
+        <div className="flex justify-center gap-4 ">
+          <div className="font-semibold text-base text-center break-normal wrap-anywhere">
             {card.frontCard}
           </div>
-          <Volume2
+          {/* <Volume2
             onClick={handleSpeech}
             className="hover:opacity-50 cursor-pointer mt-1"
             size={18}
-          />
+          /> */}
+          <div></div>
         </div>
       </div>
 
       {/* Back Card */}
-      <div className="row-span-5 lg:row-span-6 flex justify-center items-center border-b border-gray-300">
-        <div className="text-lg text-center px-4">{card.backCard}</div>
+      <div className="h-65 pt-1 overflow-y-scroll flex justify-center border-b border-gray-300">
+        <div className="text-base text-center px-4 break-normal wrap-anywhere">
+          {card.backCard}
+        </div>
       </div>
 
       {/* Review Buttons */}
-      <div className="row-span-3 flex flex-col justify-center space-y-8">
+      <div className="flex flex-col justify-center space-y-8">
         <>
           <div className="grid grid-cols-4 gap-4 mt-3">
             {reviewButtons.map((button) => (

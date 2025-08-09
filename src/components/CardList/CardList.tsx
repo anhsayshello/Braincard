@@ -176,7 +176,7 @@ export default function CardList({ dataCards, isAllCards = true }: Props) {
       {/* Open card dialog */}
 
       <Dialog open={openCardDetail} onOpenChange={setOpenCardDetail}>
-        <DialogContent showCloseButton={false} aria-describedby={undefined}>
+        <DialogContent showCloseButton={true} aria-describedby={undefined}>
           <VisuallyHidden asChild>
             <DialogTitle></DialogTitle>
           </VisuallyHidden>
