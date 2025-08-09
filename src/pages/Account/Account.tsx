@@ -1,6 +1,6 @@
 import Metadata from "@/components/Metadata";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardAction,
@@ -25,11 +25,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import userApi from "@/apis/user.api";
 import { toast } from "sonner";
 import useUserQuery from "@/hooks/useUserQuery";
+import { useProfileStore } from "@/stores/useProfileStore";
 export default function Account() {
   const [isUpdate, setIsUpdate] = useState(false);
 
+  const profile = useProfileStore((state) => state.profile);
+  console.log(profile, "zustand subcribe");
+
   const { data } = useUserQuery();
-  const dataUser = data?.data;
+  const dataUser = useMemo(() => data?.data, [data]);
 
   const form = useForm<UserSchema>({
     resolver: zodResolver(userSchema),
@@ -60,7 +64,6 @@ export default function Account() {
   });
 
   const onSubmit = (data: UserSchema) => {
-    console.log(data);
     updateUserMutation.mutate(data);
   };
 
@@ -73,10 +76,14 @@ export default function Account() {
             <div className="flex flex-col gap-2 items-center">
               <Avatar className="rounded-lg">
                 <AvatarImage
-                  src="https://github.com/evilrabbit.png"
+                  src={
+                    dataUser?.image
+                      ? dataUser.image
+                      : "https://github.com/evilrabbit.png"
+                  }
                   alt="@evilrabbit"
                 />
-                <AvatarFallback>ER</AvatarFallback>
+                <AvatarFallback>{dataUser?.name}</AvatarFallback>
               </Avatar>
               <div className="text-xs">id: {dataUser?.id}</div>
             </div>
@@ -97,14 +104,16 @@ export default function Account() {
               >
                 <FormItem className="flex items-center gap-6 mb-5">
                   <FormLabel className="basis-1/4 justify-end">
-                    Username
+                    {dataUser?.email ? "Email" : "Username"}
                   </FormLabel>
                   <div className="relative">
                     <FormControl className="basis-3/4">
                       <Input
                         className="border-none shadow-none"
                         placeholder="username"
-                        value={dataUser?.username ?? ""}
+                        value={
+                          dataUser?.email ? dataUser?.email : dataUser?.username
+                        }
                         readOnly
                       />
                     </FormControl>
