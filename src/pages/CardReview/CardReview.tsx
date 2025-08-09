@@ -1,6 +1,7 @@
 import cardApi from "@/apis/card.api";
 import CardItem from "@/components/CardItem";
 import Metadata from "@/components/Metadata";
+import { Button } from "@/components/ui/button";
 
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/types/card.type";
@@ -10,7 +11,7 @@ import { useParams } from "react-router";
 
 export default function CardReview() {
   const [progress, setProgress] = useState(0);
-  // const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [currentCard, setCurrentCard] = useState<Card>();
   const initialTotalRef = useRef<number>(0);
 
@@ -56,9 +57,25 @@ export default function CardReview() {
       </div>
       <div className="flex items-center justify-center grow">
         <div className="w-full max-w-md flex flex-col gap-6">
-          {currentCard && (
+          {!show && currentCard && (
+            <div className="flex flex-col p-6 border rounded-md">
+              <div className="h-30 overflow-y-scroll flex justify-center pb-2 border-b border-gray-200">
+                <div className="flex justify-center">
+                  <div className="font-semibold text-base text-center break-normal wrap-anywhere">
+                    {currentCard?.frontCard}
+                  </div>
+                </div>
+              </div>
+              <div className="h-110 flex items-center justify-center">
+                <Button variant="outline" onClick={() => setShow(true)}>
+                  Show answer
+                </Button>
+              </div>
+            </div>
+          )}
+          {show && currentCard && (
             <div className="border rounded-lg p-6">
-              <CardItem card={currentCard} />
+              <CardItem card={currentCard} onClick={() => setShow(false)} />
             </div>
           )}
           <div className="flex flex-col">
