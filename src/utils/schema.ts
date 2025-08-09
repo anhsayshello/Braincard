@@ -1,16 +1,16 @@
 import { z } from "zod";
 
 export const deckSchema = z.object({
-  name: z.string().min(3, "Name must be atleast 3 characters").max(50),
+  name: z.string().min(3, "Name must be at least 3 characters").max(50),
 });
 export type DeckSchema = z.infer<typeof deckSchema>;
 
 export const cardSchema = z.object({
-  frontCard: z.string().nonempty("front card content is required").max(160, {
-    message: "front card must not exceed 160 characters.",
+  frontCard: z.string().nonempty("Front card content is required").max(300, {
+    message: "Front card must not exceed 300 characters.",
   }),
-  backCard: z.string().nonempty("back card content is required").max(300, {
-    message: "back card must not exceed 300 characters.",
+  backCard: z.string().nonempty("Back card content is required").max(1000, {
+    message: "Back card must not exceed 1000 characters.",
   }),
 });
 export type CardSchema = z.infer<typeof cardSchema>;
@@ -71,7 +71,8 @@ export const feedbackSchema = z.object({
     .number({ message: "Please select a feedback type" })
     .int()
     .min(0)
-    .max(3),
+    .max(3)
+    .refine((value) => value !== null, { message: "invalid type" }),
   content: z
     .string()
     .nonempty("message is required")
@@ -79,7 +80,7 @@ export const feedbackSchema = z.object({
       message: "message must be at least 10 characters.",
     })
     .max(200, {
-      message: "message must not be longer than 200 characters.",
+      message: "message must not exceed than 200 characters.",
     }),
 });
 export type FeedbackSchema = z.infer<typeof feedbackSchema>;
