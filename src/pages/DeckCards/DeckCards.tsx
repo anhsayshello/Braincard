@@ -1,10 +1,8 @@
-import { createSearchParams, Link, useNavigate, useParams } from "react-router";
+import { createSearchParams, useNavigate, useParams } from "react-router";
 
 import { Input } from "@/components/ui/input";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import cardApi from "@/apis/card.api";
-import Tooltip from "@/components/Tooltip";
-import path from "@/constants/path";
 import { Axe, SearchIcon, Plus } from "lucide-react";
 
 import { CreateCard } from "@/components/CardFormDialog/CardFormDialog";
@@ -58,27 +56,26 @@ export default function DeckCards() {
       <Metadata title="Card | BrainCard" content="card-list" />
       <>
         <div className="flex items-center gap-4">
-          <Link to={path.deck} className="p-1 mt-1">
-            <Tooltip
-              trigger={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.2}
-                  stroke="currentColor"
-                  className="size-4.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 19.5 8.25 12l7.5-7.5"
-                  />
-                </svg>
-              }
-              content="back"
-            />
-          </Link>
+          <Button
+            onClick={() => navigate(-1)}
+            variant="ghost"
+            className="cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.2}
+              stroke="currentColor"
+              className="size-4.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+              />
+            </svg>
+          </Button>
           <div className="flex grow h-9 items-center gap-2 border-b px-3">
             <SearchIcon className="size-4 shrink-0 opacity-50" />
             <Input
