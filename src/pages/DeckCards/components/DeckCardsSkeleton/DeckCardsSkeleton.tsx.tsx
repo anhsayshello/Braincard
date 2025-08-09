@@ -27,7 +27,7 @@ export default function DeckCardsSkeleton() {
     <div>
       <div className="md:min-w-[450px]">
         <div className="flex items-center gap-4">
-          <div className="p-1">
+          <Button disabled={true} variant="ghost">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -42,7 +42,7 @@ export default function DeckCardsSkeleton() {
                 d="M15.75 19.5 8.25 12l7.5-7.5"
               />
             </svg>
-          </div>
+          </Button>
           <div className="flex grow h-9 items-center gap-2 border-b px-3">
             <SearchIcon className="size-4 shrink-0 opacity-50" />
             <Input
