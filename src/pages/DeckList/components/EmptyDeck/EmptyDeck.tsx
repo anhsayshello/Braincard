@@ -5,7 +5,7 @@ import { Layers, Plus } from "lucide-react";
 // Empty deck component
 export default function EmptyDeck() {
   return (
-    <div className="flex flex-col items-center justify-center py-25 px-4 text-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <Layers className="w-12 h-12 text-gray-300 mb-4" />
       <h3 className="text-base font-medium text-gray-600 mb-2">
         No decks available

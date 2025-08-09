@@ -101,7 +101,11 @@ export default function DeckList() {
   return (
     <>
       <Metadata title="Deck | BrainCard" content="deck-list" />
-      <div>
+      <div
+        className={
+          dataDeck && dataDeck?.data.length === 0 ? "grow flex flex-col" : ""
+        }
+      >
         <div className="sticky top-0 pb-2">
           <div className="flex justify-between items-center bg-white/90">
             <div className="flex items-end gap-5 pt-5">
@@ -121,7 +125,13 @@ export default function DeckList() {
             </div>
           </div>
         </div>
-        <div className="pt-2">
+        <div
+          className={
+            dataDeck && dataDeck?.data.length === 0
+              ? "grow flex justify-center items-center -mt-20"
+              : "pt-3"
+          }
+        >
           <div>
             {dataDeck &&
               dataDeck?.data.map((deck) => {

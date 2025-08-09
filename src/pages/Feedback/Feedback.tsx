@@ -47,6 +47,7 @@ export default function Feedback() {
   const feedbackMutation = useMutation({
     mutationFn: feedbackApi.send,
     onSuccess: () => {
+      form.reset({ type: undefined, content: "" });
       toast.success("Your feedback has been received!", {
         description: <div className="text-black">Thank you for your help.</div>,
       });
@@ -57,7 +58,9 @@ export default function Feedback() {
   const onSubmit = useCallback(
     (data: FeedbackSchema) => {
       console.log(data);
-      feedbackMutation.mutate(data);
+      if (typeof data.type === "number") {
+        feedbackMutation.mutate(data);
+      }
     },
     [feedbackMutation]
   );

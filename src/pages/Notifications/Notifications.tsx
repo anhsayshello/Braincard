@@ -193,7 +193,7 @@ export default function Notifications() {
       {/* Open notificaiton */}
       <Dialog open={openNotification} onOpenChange={setOpenNotification}>
         <DialogContent>
-          <DialogHeader className="text-left break-all">
+          <DialogHeader className="text-left break-normal wrap-anywhere">
             <DialogTitle className="mb-2 mr-4">
               {selectedNotification?.title}
             </DialogTitle>
