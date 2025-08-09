@@ -1,5 +1,6 @@
 import User from "@/types/user.type";
-import { getProfileFromLS } from "@/utils/auth";
+import { persist } from "zustand/middleware";
+
 import { create } from "zustand";
 
 type ProfileStore = {
@@ -7,7 +8,14 @@ type ProfileStore = {
   setProfile: (newProfile: User | null) => void;
 };
 
-export const useProfileStore = create<ProfileStore>((set) => ({
-  profile: getProfileFromLS(),
-  setProfile: (newProfile) => set({ profile: newProfile }),
-}));
+export const useProfileStore = create<ProfileStore>()(
+  persist(
+    (set) => ({
+      profile: null,
+      setProfile: (newProfile) => set({ profile: newProfile }),
+    }),
+    {
+      name: "profile",
+    }
+  )
+);
