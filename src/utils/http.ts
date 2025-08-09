@@ -1,13 +1,14 @@
 import axios, { AxiosInstance, HttpStatusCode } from "axios";
 import config from "@/constants/config";
 import {
-  clearLS,
-  getAccessTokenFromLS,
-  setAccessTokenToLS,
-  setProfileToLS,
-} from "./auth";
-import { URL_LOGIN, URL_LOGOUT, URL_REGISTER } from "@/apis/auth.api";
+  URL_GOOGLELOGIN,
+  URL_LOGOUT,
+  URL_REGISTER,
+  URL_USERNAMELOGIN,
+} from "@/apis/auth.api";
 import AuthResponse from "@/types/auth.type";
+import { authService } from "@/services/authService";
+import { useAccessTokenStore } from "@/stores/useAccessTokenStore";
 
 class Http {
   instance: AxiosInstance;
@@ -20,8 +21,9 @@ class Http {
       },
     });
     this.instance.interceptors.request.use(
-      (config) => {
-        const access_token = getAccessTokenFromLS();
+      async (config) => {
+        await useAccessTokenStore.persist.rehydrate();
+        const access_token = useAccessTokenStore.getState().access_token;
         if (access_token) {
           config.headers.Authorization = `Bearer ${access_token}`;
         }
@@ -35,14 +37,18 @@ class Http {
     this.instance.interceptors.response.use(
       (response) => {
         const { url } = response.config;
-        if (url === URL_LOGIN || url === URL_REGISTER) {
+        if (
+          url === URL_USERNAMELOGIN ||
+          url?.includes(URL_GOOGLELOGIN) ||
+          url === URL_REGISTER
+        ) {
           const data = response.data as AuthResponse;
+          console.log(data);
           if (data.access_token) {
-            setAccessTokenToLS(data.access_token);
-            setProfileToLS(data.user);
+            authService.setAuthData(data);
           }
         } else if (url === URL_LOGOUT) {
-          clearLS();
+          authService.clearAuthData();
         }
         return response;
       },
@@ -55,7 +61,7 @@ class Http {
           // toast.error(data.error || message);
         }
         if (error.response?.status === HttpStatusCode.Unauthorized) {
-          clearLS();
+          authService.clearAuthData();
         }
         return Promise.reject(error);
       }
