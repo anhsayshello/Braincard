@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import path from "@/constants/path";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import classNames from "classnames";
@@ -47,41 +47,43 @@ import authApi from "@/apis/auth.api";
 import { Badge } from "../ui/badge";
 import notificationApi from "@/apis/notification.api";
 import useUserQuery from "@/hooks/useUserQuery";
+import { useMemo } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const items = [
   {
     title: "Home",
-    url: path.home,
+    path: path.home,
     icon: Home,
     tooltip: "Home",
   },
   {
     title: "Deck",
-    url: path.deck,
+    path: path.deck,
     icon: Ghost,
     tooltip: "Deck",
   },
   {
     title: "Search",
-    url: path.allCards,
+    path: path.allCards,
     icon: Search,
     tooltip: "Search",
   },
   {
     title: "Feedback",
-    url: path.feedback,
+    path: path.feedback,
     icon: Inbox,
     tooltip: "Feedback",
   },
   {
     title: "Notifications",
-    url: path.notifications,
+    path: path.notifications,
     icon: Bell,
     tooltip: "Notifications",
   },
   {
     title: "Settings",
-    url: "#",
+    path: "#",
     icon: Settings,
     tooltip: "Not available",
   },
@@ -92,28 +94,36 @@ export default function AppSidebar() {
   const isAuthenticated = useAuthenticatedStore(
     (state) => state.isAuthenticated
   );
+
   const { data: dataUnreadNotifications } = useQuery({
     queryKey: ["unreadCount"],
     queryFn: () => notificationApi.getUnRead(),
     enabled: isAuthenticated,
   });
-  console.log("re-render");
 
   const { data: dataUser } = useUserQuery();
-  const name = dataUser?.data?.name ?? "unnamed";
-  console.log(dataUser);
+  const name = useMemo(
+    () => dataUser?.data?.name ?? "unnamed",
+    [dataUser?.data.name]
+  );
+  const avatar = useMemo(
+    () => dataUser?.data?.image ?? "",
+    [dataUser?.data.image]
+  );
+
+  const { pathname } = useLocation();
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
     onSuccess: (data) => {
       console.log("log out", data);
       queryClient.removeQueries({ queryKey: ["unreadCount"] });
       queryClient.removeQueries({ queryKey: ["stats"] });
-      nagigate("/");
+      navigate("/");
     },
   });
-  const nagigate = useNavigate();
   const handleLogout = () => {
     logoutMutation.mutate();
   };
@@ -153,8 +163,17 @@ export default function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title} className="my-1">
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url}>
+                  <SidebarMenuButton
+                    className="cursor-pointer"
+                    asChild
+                    onClick={() => navigate({ pathname: item.path })}
+                    isActive={
+                      item.path === "/"
+                        ? pathname === "/"
+                        : pathname.startsWith(item.path)
+                    }
+                  >
+                    <div>
                       <Tooltip>
                         <TooltipTrigger>
                           {item.title !== "Settings" ? (
@@ -195,7 +214,7 @@ export default function AppSidebar() {
                       >
                         {item.title}
                       </span>
-                    </Link>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -210,7 +229,15 @@ export default function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
-                    <User2 /> {name}
+                    {avatar ? (
+                      <Avatar className="size-6">
+                        <AvatarImage src={avatar} />
+                        <AvatarFallback>{name}</AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <User2 />
+                    )}
+                    {name}
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
