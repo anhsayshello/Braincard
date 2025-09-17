@@ -28,12 +28,13 @@ import useQueryConfig from "@/hooks/useQueryConfig";
 import { omit } from "lodash";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { CardQueryParams } from "@/types/card.type";
-import CardList from "@/components/CardList";
 import Pagination from "@/components/Pagination";
 import AllCardsSkeleton from "./components/AllCardsSkeleton";
 import allCardsApi from "@/apis/allCards.api";
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import Metadata from "@/components/Metadata";
+import CardNotFound from "./components/CardNotFound";
+import CardPreviewItem from "@/components/CardPreviewItem";
 
 const filters = [
   {
@@ -103,13 +104,14 @@ export default function AllCards() {
   const queryConfig = useQueryConfig();
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { data: dataAllCards, isPending } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["allCards", queryConfig],
     queryFn: () => allCardsApi.search(queryConfig as CardQueryParams),
     placeholderData: keepPreviousData,
   });
 
-  console.log(dataAllCards);
+  const dataAllCards = useMemo(() => data?.data.cards, [data]);
+  const dataAllCardsPagination = useMemo(() => data?.data.pagination, [data]);
 
   const handleTextSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,7 +245,7 @@ export default function AllCards() {
 
         <Pagination
           dataPagination={
-            dataAllCards?.data.pagination || {
+            dataAllCardsPagination ?? {
               limit: 0,
               currentPage: 1,
               totalPages: 1,
@@ -254,12 +256,18 @@ export default function AllCards() {
       </div>
       <div
         className={
-          dataAllCards?.data.cards.length === 0
+          dataAllCards && dataAllCards.length === 0
             ? "grow flex items-center justify-center"
             : ""
         }
       >
-        <CardList dataCards={dataAllCards ? dataAllCards.data.cards : []} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
+          {dataAllCards && dataAllCards.length === 0 && <CardNotFound />}
+          {dataAllCards &&
+            dataAllCards.map((card) => (
+              <CardPreviewItem key={card.id} card={card} isAllCards={true} />
+            ))}
+        </div>
       </div>
     </>
   );

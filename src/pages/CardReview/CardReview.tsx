@@ -1,13 +1,14 @@
 import cardApi from "@/apis/card.api";
-import CardItem from "@/components/CardItem";
+import CardItem from "@/components/CardDetailItem";
 import Metadata from "@/components/Metadata";
 import { Button } from "@/components/ui/button";
 
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/types/card.type";
 import { useQuery } from "@tanstack/react-query";
+import { Reply } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 export default function CardReview() {
   const [progress, setProgress] = useState(0);
@@ -16,6 +17,7 @@ export default function CardReview() {
   const initialTotalRef = useRef<number>(0);
 
   const { deckId } = useParams();
+  const navigate = useNavigate();
 
   const { data: dataCardsReview } = useQuery({
     queryKey: ["cardsReview", deckId],
@@ -74,16 +76,29 @@ export default function CardReview() {
             </div>
           )}
           {show && currentCard && (
-            <div className="border rounded-lg p-6">
-              <CardItem card={currentCard} onClick={() => setShow(false)} />
+            <>
+              <div className="border rounded-lg p-6">
+                <CardItem card={currentCard} onClick={() => setShow(false)} />
+              </div>
+              <div className="flex flex-col">
+                <div className="text-right mb-2 text-sm text-black/50">
+                  remaining: {dataCardsReview?.data.length}
+                </div>
+                <Progress value={progress} className="h-1" />
+              </div>
+            </>
+          )}
+          {dataCardsReview?.data.length === 0 && (
+            <div className="flex flex-col justify-center items-center gap-4">
+              <div className="text-base font-medium text-gray-600">
+                No cards available for review
+              </div>
+              <Button size="sm" onClick={() => navigate(-1)}>
+                <Reply size={22} />
+                Go back
+              </Button>
             </div>
           )}
-          <div className="flex flex-col">
-            <div className="text-right mb-2 text-sm text-black/50">
-              remaining: {dataCardsReview?.data.length}
-            </div>
-            <Progress value={progress} className="h-1" />
-          </div>
         </div>
       </div>
     </>

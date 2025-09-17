@@ -67,6 +67,10 @@ export default function DeckCardsSkeleton() {
               <Skeleton className="w-3.5 h-3.5 rounded animate-pulse"></Skeleton>
               Add New Card
             </Button>
+            <Button size="sm" variant="outline" disabled>
+              <Skeleton className="w-3.5 h-3.5 rounded animate-pulse"></Skeleton>
+              Check All
+            </Button>
           </div>
         </div>
 

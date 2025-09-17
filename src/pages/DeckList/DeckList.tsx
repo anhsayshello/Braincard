@@ -138,28 +138,28 @@ export default function DeckList() {
                 const masterdedCardsProgress =
                   (deck.masteredCards / deck.totalCards) * 100;
                 return (
-                  <motion.div
-                    key={deck.id}
-                    whileHover={{
-                      y: -1,
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.div key={deck.id}>
                     <div className="mb-3">
-                      <Card>
-                        <CardHeader className="flex justify-between items-center">
-                          <Link
-                            to={`/decks/${deck.id}/cards`}
-                            className="flex-1"
-                          >
-                            <CardTitle className="hover:text-primary transition-colors">
-                              {deck.name}
-                            </CardTitle>
-                          </Link>
-                          <AppDropDownMenu options={getDropdownOptions(deck)} />
-                        </CardHeader>
+                      <Link
+                        to={`/decks/${deck.id}/cards`}
+                        state={{
+                          deckName: deck.name,
+                        }}
+                      >
+                        <Card>
+                          <CardHeader className="flex justify-between items-center">
+                            <div className="flex-1">
+                              <CardTitle className="hover:text-primary transition-colors">
+                                {deck.name}
+                              </CardTitle>
+                            </div>
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <AppDropDownMenu
+                                options={getDropdownOptions(deck)}
+                              />
+                            </div>
+                          </CardHeader>
 
-                        <Link to={`/decks/${deck.id}/cards`}>
                           <CardContent>
                             <div className="flex items-center gap-5">
                               <div className="flex items-center gap-1.5 text-sm leading-5">
@@ -193,8 +193,8 @@ export default function DeckList() {
                               %
                             </div>
                           </CardContent>
-                        </Link>
-                      </Card>
+                        </Card>
+                      </Link>
                     </div>
                   </motion.div>
                 );
