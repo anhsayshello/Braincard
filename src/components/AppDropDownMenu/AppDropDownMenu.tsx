@@ -21,10 +21,10 @@ interface Props {
 export default function AppDropDownMenu({ options }: Props) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+      <DropdownMenuTrigger asChild>
         <div className="cursor-pointer">
           <Tooltip
-            trigger={<MoreHorizontalIcon className="size-4" />}
+            trigger={<MoreHorizontalIcon className="size-5" />}
             content="Options"
           />
         </div>
