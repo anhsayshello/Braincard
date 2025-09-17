@@ -1,35 +1,65 @@
-import { createSearchParams, useNavigate, useParams } from "react-router";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 
 import { Input } from "@/components/ui/input";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import cardApi from "@/apis/card.api";
-import { Axe, SearchIcon, Plus } from "lucide-react";
+import { Axe, SearchIcon, Plus, X, CircleCheckBig, Trash2 } from "lucide-react";
+import {
+  AlertDialog as DeleteDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { CreateCard } from "@/components/CardFormDialog/CardFormDialog";
 import { Button } from "@/components/ui/button";
-import CardList from "@/components/CardList";
 import useQueryConfig from "@/hooks/useQueryConfig";
-import { CardQueryParams } from "@/types/card.type";
+import { Card, CardQueryParams } from "@/types/card.type";
 import Pagination from "@/components/Pagination";
 import DeckCardsSkeleton from "./components/DeckCardsSkeleton";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Metadata from "@/components/Metadata";
+import EmptyDeckCard from "./components/EmptyDeckCard";
+import CardPreviewItem from "@/components/CardPreviewItem";
+import { toast } from "sonner";
+import Spinner from "@/components/Spinner";
+
+interface ExtendedCard extends Card {
+  checked: boolean;
+}
 
 export default function DeckCards() {
   const { deckId } = useParams();
+  const [cards, setCards] = useState<ExtendedCard[]>([]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
   const queryConfig = useQueryConfig();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { deckName } = location.state;
 
-  const {
-    data: dataCards,
-    isPending,
-    refetch,
-  } = useQuery({
+  const { data, isPending, refetch } = useQuery({
     queryKey: ["deckCards", deckId, queryConfig],
     queryFn: () =>
       cardApi.getCards(deckId as string, queryConfig as CardQueryParams),
     placeholderData: keepPreviousData,
   });
+  useEffect(() => {
+    if (data) {
+      setCards(data?.data.cards.map((card) => ({ ...card, checked: false })));
+    }
+  }, [data]);
+
+  const dataPagination = useMemo(() => data?.data.pagination, [data]);
 
   const handleTextSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +75,55 @@ export default function DeckCards() {
     },
     [queryConfig, navigate, deckId]
   );
-  console.log(dataCards);
+
+  const handleCheck = (id: string) => {
+    setCards(
+      cards.map((card) =>
+        card.id === id ? { ...card, checked: !card.checked } : card
+      )
+    );
+  };
+  console.log(cards);
+
+  const handleCheckAll = () => {
+    setCards(cards.map((card) => ({ ...card, checked: true })));
+  };
+
+  const handleUncheckAll = () => {
+    setCards(cards.map((card) => ({ ...card, checked: false })));
+  };
+
+  const checkedCardCount = useMemo(
+    () => cards.filter((card) => card.checked).length,
+    [cards]
+  );
+  const someCheckCards = useMemo(
+    () => cards.some((card) => card.checked),
+    [cards]
+  );
+
+  const deleteCardsMutation = useMutation({
+    mutationFn: cardApi.deleteCard,
+    onSuccess: () => {
+      refetch();
+      toast.success(`Cards has been deleted`, {
+        duration: 1500,
+      });
+      setOpenDeleteDialog(false);
+    },
+    onError: (error) => {
+      console.error("Error deleting card:", error);
+    },
+  });
+
+  const handleDeleteMany = () => {
+    if (deckId) {
+      const cardIds = cards
+        .filter((card) => card.checked)
+        .map((card) => card.id);
+      deleteCardsMutation.mutate({ deckId, cardIds });
+    }
+  };
 
   if (isPending) {
     return <DeckCardsSkeleton />;
@@ -124,45 +202,86 @@ export default function DeckCards() {
               }
               onSuccess={() => console.log("Card created!")}
             />
-            {/* {isCheckAll ? (
-            <Button variant="outline" onClick={() => setIsCheckAll(false)}>
-              <X />
-              Uncheck
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={() => setIsCheckAll(true)}>
-              <CircleCheckBig />
-              Check All
-            </Button>
-          )} */}
+
+            {!someCheckCards && (
+              <Button variant="outline" onClick={handleCheckAll}>
+                <CircleCheckBig />
+                Check All
+              </Button>
+            )}
+            {someCheckCards && (
+              <>
+                <Button variant="outline" onClick={handleUncheckAll}>
+                  <X />
+                  Uncheck
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => setOpenDeleteDialog(true)}
+                >
+                  <Trash2 />
+                  {`Delete (${checkedCardCount})`}
+                </Button>
+              </>
+            )}
           </div>
           <Pagination
             dataPagination={
-              dataCards
-                ? dataCards.data.pagination
-                : {
-                    limit: 0,
-                    currentPage: 1,
-                    totalPages: 0,
-                    totalCards: 0,
-                  }
+              dataPagination ?? {
+                limit: 0,
+                currentPage: 1,
+                totalPages: 0,
+                totalCards: 0,
+              }
             }
             isAllCards={false}
           />
         </div>
         <div
           className={
-            dataCards?.data.cards.length === 0
-              ? "grow flex items-center justify-center"
-              : ""
+            cards?.length === 0 ? "grow flex items-center justify-center" : ""
           }
         >
-          <CardList
-            dataCards={dataCards ? dataCards.data.cards : []}
-            isAllCards={false}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
+            {cards && cards.length === 0 && <EmptyDeckCard />}
+            {cards &&
+              cards.map((card) => (
+                <CardPreviewItem
+                  key={card.id}
+                  card={card}
+                  handleCheck={() => handleCheck(card.id)}
+                  isChecked={card.checked}
+                />
+              ))}
+          </div>
         </div>
       </>
+
+      {/* Delete */}
+      <DeleteDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {checkedCardCount > 1
+                ? `This action cannot be undone. All cards in the "${deckName}" deck will be permanently deleted from our servers.`
+                : `This action cannot be undone. This card will be permanently deleted from our servers.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenDeleteDialog(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteMany}
+              className="cursor-pointer bg-red-500 hover:bg-red-400"
+              disabled={deleteCardsMutation.isPending}
+            >
+              {deleteCardsMutation.isPending ? <Spinner /> : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </DeleteDialog>
     </>
   );
 }
