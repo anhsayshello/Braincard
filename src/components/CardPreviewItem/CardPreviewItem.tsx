@@ -19,22 +19,27 @@ import Spinner from "@/components/Spinner";
 import AppDropDownMenu from "@/components/AppDropDownMenu";
 import { toast } from "sonner";
 import { motion } from "motion/react";
-import EmptyDeckCard from "@/pages/DeckCards/components/EmptyDeckCard";
-import CardNotFound from "@/pages/AllCards/components/CardNotFound";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import CardItem from "../CardItem";
+import CardDetailItem from "../CardDetailItem";
+import { Checkbox } from "../ui/checkbox";
 
-interface Props {
-  dataCards: CardType[];
+export default function CardPreviewItem({
+  card,
+  isAllCards = false,
+  handleCheck,
+  isChecked,
+}: {
+  card: CardType;
   isAllCards?: boolean;
-}
-
-export default function CardList({ dataCards, isAllCards = true }: Props) {
+  handleCheck?: () => void;
+  isChecked?: boolean;
+}) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [openCardDetail, setOpenCardDetail] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+
   const queryClient = useQueryClient();
 
   const handleOpenCardDetail = useCallback(
@@ -77,7 +82,7 @@ export default function CardList({ dataCards, isAllCards = true }: Props) {
       setSelectedCard(null);
     },
     onError: (error) => {
-      console.error("Error deleting deck:", error);
+      console.error("Error deleting card:", error);
     },
   });
 
@@ -103,84 +108,66 @@ export default function CardList({ dataCards, isAllCards = true }: Props) {
     ],
     [handleEditClick, handleDeleteClick]
   );
-
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-        {dataCards && dataCards.length === 0 ? (
-          !isAllCards ? (
-            <EmptyDeckCard />
-          ) : (
-            <CardNotFound />
-          )
-        ) : (
-          ""
-        )}
-        {dataCards &&
-          dataCards.map((card) => (
-            <motion.div
-              key={card.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.05,
-                ease: "linear",
-              }}
-              whileTap={{
-                scale: 0.95,
-              }}
+      <motion.div
+        key={card.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.05,
+          ease: "linear",
+        }}
+      >
+        <Card
+          className="mb-1 cursor-pointer"
+          onClick={() => handleOpenCardDetail(card)}
+        >
+          <CardHeader className="flex justify-between">
+            <CardTitle
+              onClick={() => handleOpenCardDetail(card)}
+              className="text-xl cursor-pointer truncate mr-2"
             >
-              <Card className="mb-1">
-                <CardHeader className="flex justify-between">
-                  <CardTitle
-                    onClick={() => handleOpenCardDetail(card)}
-                    className="text-xl cursor-pointer truncate mr-2"
-                  >
-                    <div className="truncate">{card.frontCard}</div>
-                  </CardTitle>
-                  <AppDropDownMenu options={getDropdownOptions(card)} />
-                </CardHeader>
-                <button
-                  className="col-span-1 cursor-pointer"
-                  onClick={() => handleOpenCardDetail(card)}
-                >
-                  <CardContent>
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-5">
-                        <div className="flex items-center gap-1.5 text-sm leading-5">
-                          <div className="text-black/60">Review</div>
-                          <div className="font-semibold">
-                            {card.reviewCount}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-sm leading-5">
-                          <div className="text-black/60">Forget</div>
-                          <div className="font-semibold">
-                            {card.forgetCount}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-sm leading-5">
-                          <div className="text-black/60 truncate font-semibold">
-                            {card.timeUntilReview}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </button>
-              </Card>
-            </motion.div>
-          ))}
-      </div>
+              <div className="truncate">{card.frontCard}</div>
+            </CardTitle>
+            <div onClick={(e) => e.stopPropagation()}>
+              <AppDropDownMenu options={getDropdownOptions(card)} />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-5 overflow-hidden">
+                <div className="flex items-center gap-1.5 text-sm leading-5">
+                  <div className="text-black/60">Review</div>
+                  <div className="font-semibold">{card.reviewCount}</div>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm leading-5">
+                  <div className="text-black/60">Forget</div>
+                  <div className="font-semibold">{card.forgetCount}</div>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm leading-5 overflow-hidden">
+                  <div className="text-black/60 font-semibold truncate">
+                    {card.timeUntilReview}
+                  </div>
+                </div>
+              </div>
+              {!isAllCards && handleCheck && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox checked={isChecked} onCheckedChange={handleCheck} />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* Open card dialog */}
-
+      {/* Open card detail dialog */}
       <Dialog open={openCardDetail} onOpenChange={setOpenCardDetail}>
         <DialogContent showCloseButton={true} aria-describedby={undefined}>
           <VisuallyHidden asChild>
             <DialogTitle></DialogTitle>
           </VisuallyHidden>
-          <CardItem
+          <CardDetailItem
             card={selectedCard as CardType}
             onClick={() => setOpenCardDetail(false)}
           />
