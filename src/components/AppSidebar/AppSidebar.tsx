@@ -90,7 +90,7 @@ const items = [
 ];
 
 export default function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const isAuthenticated = useAuthenticatedStore(
     (state) => state.isAuthenticated
   );
@@ -166,7 +166,10 @@ export default function AppSidebar() {
                   <SidebarMenuButton
                     className="cursor-pointer"
                     asChild
-                    onClick={() => navigate({ pathname: item.path })}
+                    onClick={() => {
+                      navigate({ pathname: item.path });
+                      setOpenMobile(false);
+                    }}
                     isActive={
                       item.path === "/"
                         ? pathname === "/"
