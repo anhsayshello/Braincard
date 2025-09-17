@@ -45,19 +45,16 @@ export default function Pagination({
     [queryConfig, deckId, navigate, isAllCards]
   );
 
-  // Generate page numbers for pagination
   const generatePageNumbers = useCallback(
     (currentPage: number, totalPages: number) => {
       const pages = [];
       const maxVisiblePages = 3;
 
       if (totalPages <= maxVisiblePages) {
-        // Show all pages if total is small
         for (let i = 1; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
-        // Show smart pagination
         if (currentPage <= 2) {
           pages.push(1, 2, 3);
         } else if (currentPage >= totalPages - 1) {
@@ -87,7 +84,6 @@ export default function Pagination({
 
   return (
     <div>
-      {/* Only show pagination if there are multiple pages */}
       {dataPagination && totalPages > 1 && (
         <PaginationWrapper>
           <PaginationContent>
@@ -102,7 +98,6 @@ export default function Pagination({
               />
             </PaginationItem>
 
-            {/* Show first page and ellipsis if needed */}
             {pageNumbers[0] > 1 && (
               <>
                 <PaginationItem>
@@ -121,7 +116,6 @@ export default function Pagination({
               </>
             )}
 
-            {/* Show page numbers */}
             {pageNumbers.map((pageNum) => (
               <PaginationItem key={pageNum}>
                 <PaginationLink
@@ -134,7 +128,6 @@ export default function Pagination({
               </PaginationItem>
             ))}
 
-            {/* Show ellipsis and last page if needed */}
             {pageNumbers[pageNumbers.length - 1] < totalPages && (
               <>
                 {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
