@@ -28,7 +28,7 @@ import Spinner from "../Spinner";
 import { toast } from "sonner";
 import handleFormError from "@/helpers/handleFormError";
 
-interface DeckFormDialogProps {
+interface DeckFormProps {
   mode: "create" | "update";
   deck?: Deck;
   trigger?: React.ReactNode;
@@ -44,7 +44,7 @@ export default function DeckFormDialog({
   onSuccess,
   externalOpen,
   setExternalOpen,
-}: DeckFormDialogProps) {
+}: DeckFormProps) {
   const [open, setOpen] = useState(false);
   const controlledOpen = externalOpen ?? open;
   const setControlledOpen = setExternalOpen ?? setOpen;
@@ -118,7 +118,7 @@ export default function DeckFormDialog({
     ]
   );
 
-  const isLoading =
+  const isPending =
     createDeckMutation.isPending || updateDeckMutation.isPending;
 
   return (
@@ -163,8 +163,8 @@ export default function DeckFormDialog({
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? (
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? (
                     <Spinner />
                   ) : mode === "create" ? (
                     "Create"
@@ -181,12 +181,12 @@ export default function DeckFormDialog({
   );
 }
 
-export function CreateDeck(props: Omit<DeckFormDialogProps, "mode">) {
+export function CreateDeck(props: Omit<DeckFormProps, "mode">) {
   return <DeckFormDialog {...props} mode="create" />;
 }
 
 export function UpdateDeck(
-  props: Omit<DeckFormDialogProps, "mode"> & { deck: Deck }
+  props: Omit<DeckFormProps, "mode"> & { deck: Deck }
 ) {
   return <DeckFormDialog {...props} mode="update" />;
 }

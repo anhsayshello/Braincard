@@ -26,7 +26,7 @@ export default function DeckCardsSkeleton() {
   return (
     <div>
       <div className="md:min-w-[450px]">
-        <div className="flex items-center gap-4">
+        <div className="flex items-end gap-4 h-[42px] md:h-[46px]">
           <Button disabled={true} variant="ghost">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -43,15 +43,16 @@ export default function DeckCardsSkeleton() {
               />
             </svg>
           </Button>
-          <div className="flex grow h-9 items-center gap-2 border-b px-3">
-            <SearchIcon className="size-4 shrink-0 opacity-50" />
-            <Input
-              type="text"
-              placeholder="Enter a word to search"
-              className="!border-0 !outline-0 !ring-0 !shadow-none focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!ring-0 aria-invalid:!border-0"
-              disabled
-            />
-          </div>
+          <Skeleton className="w-60 h-8 rounded animate-pulse"></Skeleton>
+        </div>
+        <div className="flex grow h-9 items-center gap-2 border-b px-5 mt-3">
+          <SearchIcon className="size-4 shrink-0 opacity-50" />
+          <Input
+            type="text"
+            placeholder="Enter a word to search"
+            className="!border-0 !outline-0 !ring-0 !shadow-none focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!ring-0 aria-invalid:!border-0"
+            disabled
+          />
         </div>
         <div className="flex items-center justify-between mt-5 mb-4.5">
           <div className="flex items-center gap-3 flex-wrap">

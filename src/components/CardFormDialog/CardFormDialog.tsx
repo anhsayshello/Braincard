@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import handleFormError from "@/helpers/handleFormError";
 import dateFormatter from "@/helpers/dateFormatter";
 
-interface CardFormDialogProps {
+interface CardFormProps {
   mode: "create" | "update";
   card?: Card;
   trigger?: React.ReactNode;
@@ -46,7 +46,7 @@ export function CardFormDialog({
   onSuccess,
   externalOpen,
   setExternalOpen,
-}: CardFormDialogProps) {
+}: CardFormProps) {
   const [open, setOpen] = useState(false);
   const { deckId } = useParams();
   const controlledOpen = externalOpen ?? open;
@@ -144,7 +144,7 @@ export function CardFormDialog({
     ]
   );
 
-  const isLoading =
+  const isPending =
     createCardMutation.isPending || updateCardMutation.isPending;
 
   return (
@@ -173,7 +173,7 @@ export function CardFormDialog({
                       }
                       {...field}
                       className="min-h-20 max-h-45 text-sm"
-                      disabled={isLoading}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -192,7 +192,7 @@ export function CardFormDialog({
                       placeholder="Generally used for inputting answers, such as 'A duck has 2 legs'"
                       {...field}
                       className="min-h-30 max-h-70 text-sm"
-                      disabled={isLoading}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -202,10 +202,10 @@ export function CardFormDialog({
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isPending}
               className="fixed top-3 right-3.5 p-1.5 cursor-pointer hover:opacity-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
+              {isPending ? (
                 <Spinner />
               ) : (
                 <svg
@@ -229,7 +229,7 @@ export function CardFormDialog({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" disabled={isLoading}>
+            <Button variant="outline" disabled={isPending}>
               Close
             </Button>
           </DialogClose>
@@ -239,12 +239,12 @@ export function CardFormDialog({
   );
 }
 
-export function CreateCard(props: Omit<CardFormDialogProps, "mode">) {
+export function CreateCard(props: Omit<CardFormProps, "mode">) {
   return <CardFormDialog {...props} mode="create" />;
 }
 
 export function UpdateCard(
-  props: Omit<CardFormDialogProps, "mode"> & { card: Card }
+  props: Omit<CardFormProps, "mode"> & { card: Card }
 ) {
   return <CardFormDialog {...props} mode="update" />;
 }

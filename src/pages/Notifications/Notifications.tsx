@@ -1,11 +1,7 @@
-import notificationApi from "@/apis/notification.api";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, X, Mail, MailOpen, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AppDropDownMenu from "@/components/AppDropDownMenu";
-import { useCallback, useMemo, useState } from "react";
-import Notification from "@/types/notification.type";
 import {
   AlertDialog as DeleteDialog,
   AlertDialogAction,
@@ -25,109 +21,32 @@ import {
 } from "@/components/ui/dialog";
 import Spinner from "@/components/Spinner";
 import classNames from "classnames";
-import { useSearchParams } from "react-router";
 import getTimeAgo from "@/helpers/getTimeAgo";
 import EmptyNotification from "./components/EmptyNotification";
 import Metadata from "@/components/Metadata";
+import AppTitle from "@/components/shared/app-title";
+import useNotifications from "@/hooks/useNotifications";
 
 export default function Notifications() {
-  const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [openDeleteAllDialog, setOpenDeleteAllDialog] = useState(false);
-  const [openNotification, setOpenNotification] = useState(false);
-  const [selectedNotification, setSelectedNotification] =
-    useState<Notification>();
-
-  const { data: dataNotifications, refetch } = useQuery({
-    queryKey: ["notification"],
-    queryFn: () => notificationApi.get(),
-  });
-  console.log(searchParams);
-
-  const readOneNotificationMutation = useMutation({
-    mutationFn: notificationApi.readOne,
-    onSuccess: () => {
-      refetch();
-      queryClient.invalidateQueries({ queryKey: ["unreadCount"] });
-    },
-  });
-
-  const readAllNotificationsMutation = useMutation({
-    mutationFn: notificationApi.readAll,
-    onSuccess: () => {
-      refetch();
-      queryClient.invalidateQueries({ queryKey: ["unreadCount"] });
-    },
-  });
-
-  const deleteOneNotificationMutation = useMutation({
-    mutationFn: notificationApi.deleteOne,
-    onSuccess: () => {
-      refetch();
-    },
-  });
-  const deleteAllNotificationsMutation = useMutation({
-    mutationFn: notificationApi.deleteAll,
-    onSuccess: (data) => {
-      console.log(data);
-      refetch();
-      setOpenDeleteAllDialog(false);
-    },
-  });
-
-  const handleReadOne = useCallback(
-    (notification: Notification) => {
-      setSearchParams({ id: notification.id });
-      setSelectedNotification(notification);
-      setOpenNotification(true);
-      if (notification.isRead === false) {
-        readOneNotificationMutation.mutate(notification.id);
-      }
-    },
-    [
-      setSearchParams,
-      setSelectedNotification,
-      setOpenNotification,
-      readOneNotificationMutation,
-    ]
-  );
-
-  const handleReadAll = useCallback(() => {
-    readAllNotificationsMutation.mutate();
-  }, [readAllNotificationsMutation]);
-
-  const handleDeleteOne = useCallback(
-    (notification: Notification) => {
-      deleteOneNotificationMutation.mutate(notification.id);
-    },
-    [deleteOneNotificationMutation]
-  );
-
-  const handleDeleteAll = useCallback(() => {
-    deleteAllNotificationsMutation.mutate();
-  }, [deleteAllNotificationsMutation]);
-
-  const getDropdownOptions = useCallback(
-    (notification: Notification) => [
-      {
-        onClick: () => handleDeleteOne(notification),
-        name: "Delete",
-      },
-    ],
-    [handleDeleteOne]
-  );
-
-  const isReadAll = useMemo(
-    () => dataNotifications?.data.every((noti) => noti.isRead === true),
-    [dataNotifications]
-  );
+  const {
+    dataNotifications,
+    isReadAll,
+    handleReadOne,
+    handleReadAll,
+    handleDeleteAll,
+    getDropdownOptions,
+    deleteAllNotificationsMutation,
+    openNotification,
+    setOpenNotification,
+    selectedNotification,
+    openDeleteAllDialog,
+    setOpenDeleteAllDialog,
+  } = useNotifications();
 
   return (
     <>
       <Metadata title="Notifications | BrainCard" content="notifs" />
-      <div className="flex items-center gap-3 pt-5">
-        <div className="text-2xl font-semibold">Notifications</div>
-      </div>
+      <AppTitle title="Notifications" />
       <div className="mt-3.5 flex items-center text-sm gap-3">
         <Button
           size="sm"

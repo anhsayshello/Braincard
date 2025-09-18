@@ -22,7 +22,10 @@ export default function Login() {
       <Metadata title="Login" content="login" />
       <div className="fixed inset-0 flex items-center justify-center p-6 z-20 bg-[oklab(0_0_0_/_0.5)]">
         <Card className="w-full max-w-sm gap-5">
-          <Link to={path.home} className="flex items-center justify-center">
+          <Link
+            to={path.dashboard}
+            className="flex items-center justify-center"
+          >
             <House size={18} />
           </Link>
           <CardHeader>

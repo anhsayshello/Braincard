@@ -1,5 +1,5 @@
 const path = {
-  home: "/",
+  dashboard: "/",
   login: "/login",
   register: "/register",
   deck: "/decks",

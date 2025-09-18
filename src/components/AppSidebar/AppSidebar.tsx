@@ -1,7 +1,6 @@
 import {
   Bell,
   ChevronUp,
-  Home,
   Ghost,
   Inbox,
   Search,
@@ -10,6 +9,7 @@ import {
   OctagonAlert,
   LogOut,
   BadgeCheck,
+  LayoutDashboard,
 } from "lucide-react";
 
 import {
@@ -52,10 +52,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const items = [
   {
-    title: "Home",
-    path: path.home,
-    icon: Home,
-    tooltip: "Home",
+    title: "Dashboard",
+    path: path.dashboard,
+    icon: LayoutDashboard,
+    tooltip: "Dashboard",
   },
   {
     title: "Deck",
@@ -133,7 +133,7 @@ export default function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroup>
-            <SidebarGroupLabel>Project</SidebarGroupLabel>
+            <SidebarGroupLabel>BrainCard</SidebarGroupLabel>
             <SidebarGroupAction>
               <HoverCard openDelay={200}>
                 <HoverCardTrigger>

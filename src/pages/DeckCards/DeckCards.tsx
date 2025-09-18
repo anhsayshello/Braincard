@@ -1,14 +1,4 @@
-import {
-  createSearchParams,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router";
-
-import { Input } from "@/components/ui/input";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
-import cardApi from "@/apis/card.api";
-import { Axe, SearchIcon, Plus, X, CircleCheckBig, Trash2 } from "lucide-react";
+import { Axe, Plus, X, CircleCheckBig, Trash2 } from "lucide-react";
 import {
   AlertDialog as DeleteDialog,
   AlertDialogAction,
@@ -22,108 +12,38 @@ import {
 
 import { CreateCard } from "@/components/CardFormDialog/CardFormDialog";
 import { Button } from "@/components/ui/button";
-import useQueryConfig from "@/hooks/useQueryConfig";
-import { Card, CardQueryParams } from "@/types/card.type";
 import Pagination from "@/components/Pagination";
 import DeckCardsSkeleton from "./components/DeckCardsSkeleton";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import Metadata from "@/components/Metadata";
 import EmptyDeckCard from "./components/EmptyDeckCard";
 import CardPreviewItem from "@/components/CardPreviewItem";
-import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
-
-interface ExtendedCard extends Card {
-  checked: boolean;
-}
+import AppTitle from "@/components/shared/app-title";
+import SearchBar from "@/components/shared/search-bar";
+import useDeckCards from "@/hooks/useDeckCards";
 
 export default function DeckCards() {
-  const { deckId } = useParams();
-  const [cards, setCards] = useState<ExtendedCard[]>([]);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const queryConfig = useQueryConfig();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { deckName } = location.state;
-
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ["deckCards", deckId, queryConfig],
-    queryFn: () =>
-      cardApi.getCards(deckId as string, queryConfig as CardQueryParams),
-    placeholderData: keepPreviousData,
-  });
-  useEffect(() => {
-    if (data) {
-      setCards(data?.data.cards.map((card) => ({ ...card, checked: false })));
-    }
-  }, [data]);
-
-  const dataPagination = useMemo(() => data?.data.pagination, [data]);
-
-  const handleTextSearch = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.value.trim() !== queryConfig.q) {
-        navigate({
-          pathname: `/decks/${deckId}/cards`,
-          search: createSearchParams({
-            ...queryConfig,
-            q: e.target.value.trim(),
-          }).toString(),
-        });
-      }
-    },
-    [queryConfig, navigate, deckId]
-  );
-
-  const handleCheck = (id: string) => {
-    setCards(
-      cards.map((card) =>
-        card.id === id ? { ...card, checked: !card.checked } : card
-      )
-    );
-  };
-  console.log(cards);
-
-  const handleCheckAll = () => {
-    setCards(cards.map((card) => ({ ...card, checked: true })));
-  };
-
-  const handleUncheckAll = () => {
-    setCards(cards.map((card) => ({ ...card, checked: false })));
-  };
-
-  const checkedCardCount = useMemo(
-    () => cards.filter((card) => card.checked).length,
-    [cards]
-  );
-  const someCheckCards = useMemo(
-    () => cards.some((card) => card.checked),
-    [cards]
-  );
-
-  const deleteCardsMutation = useMutation({
-    mutationFn: cardApi.deleteCard,
-    onSuccess: () => {
-      refetch();
-      toast.success(`Cards has been deleted`, {
-        duration: 1500,
-      });
-      setOpenDeleteDialog(false);
-    },
-    onError: (error) => {
-      console.error("Error deleting card:", error);
-    },
-  });
-
-  const handleDeleteMany = () => {
-    if (deckId) {
-      const cardIds = cards
-        .filter((card) => card.checked)
-        .map((card) => card.id);
-      deleteCardsMutation.mutate({ deckId, cardIds });
-    }
-  };
+  const {
+    data,
+    cards,
+    openDeleteDialog,
+    setOpenDeleteDialog,
+    deckId,
+    refetch,
+    inputRef,
+    navigate,
+    deckName,
+    isPending,
+    dataPagination,
+    handleSearchChange,
+    handleCheck,
+    handleCheckAll,
+    handleUncheckAll,
+    checkedCardCount,
+    someCheckCards,
+    handleDeleteMany,
+    deleteCardsMutation,
+  } = useDeckCards();
 
   if (isPending) {
     return <DeckCardsSkeleton />;
@@ -133,7 +53,7 @@ export default function DeckCards() {
     <>
       <Metadata title="Card | BrainCard" content="card-list" />
       <>
-        <div className="flex items-center gap-4">
+        <div className="flex items-end gap-4">
           <Button
             onClick={() => navigate(-1)}
             variant="ghost"
@@ -154,16 +74,12 @@ export default function DeckCards() {
               />
             </svg>
           </Button>
-          <div className="flex grow h-9 items-center gap-2 border-b px-3">
-            <SearchIcon className="size-4 shrink-0 opacity-50" />
-            <Input
-              type="text"
-              placeholder="Enter a word to search"
-              className="!border-0 !outline-0 !ring-0 !shadow-none focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!ring-0 aria-invalid:!border-0"
-              onChange={handleTextSearch}
-            />
-          </div>
+          <AppTitle title="Deck" deckName={deckName} />
         </div>
+        <SearchBar
+          inputRef={inputRef}
+          handleSearchChange={handleSearchChange}
+        />
         <div className="flex items-center flex-wrap md:justify-between gap-3 my-5">
           <div className="flex items-center gap-3 flex-wrap">
             <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -204,7 +120,11 @@ export default function DeckCards() {
             />
 
             {!someCheckCards && (
-              <Button variant="outline" onClick={handleCheckAll}>
+              <Button
+                variant="outline"
+                onClick={handleCheckAll}
+                disabled={data?.data.cards.length === 0}
+              >
                 <CircleCheckBig />
                 Check All
               </Button>

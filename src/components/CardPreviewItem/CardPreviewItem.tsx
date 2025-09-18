@@ -1,7 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import cardApi from "@/apis/card.api";
-
 import {
   AlertDialog as DeleteDialog,
   AlertDialogAction,
@@ -13,16 +10,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { UpdateCard } from "@/components/CardFormDialog/CardFormDialog";
-import { useCallback, useState } from "react";
 import { Card as CardType } from "@/types/card.type";
 import Spinner from "@/components/Spinner";
 import AppDropDownMenu from "@/components/AppDropDownMenu";
-import { toast } from "sonner";
 import { motion } from "motion/react";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import CardDetailItem from "../CardDetailItem";
 import { Checkbox } from "../ui/checkbox";
+import useCardPreview from "@/hooks/useCardPreview";
 
 export default function CardPreviewItem({
   card,
@@ -35,79 +31,19 @@ export default function CardPreviewItem({
   handleCheck?: () => void;
   isChecked?: boolean;
 }) {
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
-  const [openCardDetail, setOpenCardDetail] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
-
-  const queryClient = useQueryClient();
-
-  const handleOpenCardDetail = useCallback(
-    (card: CardType) => {
-      setSelectedCard(card);
-      setOpenCardDetail(true);
-    },
-    [setSelectedCard, setOpenCardDetail]
-  );
-
-  const handleEditClick = useCallback(
-    (card: CardType) => {
-      setSelectedCard(card);
-      setOpenUpdateDialog(true);
-    },
-    [setSelectedCard, setOpenUpdateDialog]
-  );
-
-  const handleDeleteClick = useCallback(
-    (card: CardType) => {
-      setSelectedCard(card);
-      setOpenDeleteDialog(true);
-    },
-    [setSelectedCard, setOpenDeleteDialog]
-  );
-
-  const deleteCardMutation = useMutation({
-    mutationFn: cardApi.deleteCard,
-    onSuccess: () => {
-      toast.success(`Card "${selectedCard?.frontCard}" has been deleted`, {
-        duration: 1500,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["deckCards", selectedCard?.deckId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["allCards"],
-      });
-      setOpenDeleteDialog(false);
-      setSelectedCard(null);
-    },
-    onError: (error) => {
-      console.error("Error deleting card:", error);
-    },
-  });
-
-  const handleDeleteConfirm = useCallback(() => {
-    if (selectedCard && selectedCard.deckId) {
-      deleteCardMutation.mutate({
-        deckId: selectedCard.deckId,
-        cardIds: [selectedCard.id],
-      });
-    }
-  }, [selectedCard, deleteCardMutation]);
-
-  const getDropdownOptions = useCallback(
-    (card: CardType) => [
-      {
-        onClick: () => handleEditClick(card),
-        name: "Edit",
-      },
-      {
-        onClick: () => handleDeleteClick(card),
-        name: "Delete",
-      },
-    ],
-    [handleEditClick, handleDeleteClick]
-  );
+  const {
+    handleDeleteConfirm,
+    handleOpenCardDetail,
+    getDropdownOptions,
+    openCardDetail,
+    setOpenCardDetail,
+    openDeleteDialog,
+    setOpenDeleteDialog,
+    openUpdateDialog,
+    setOpenUpdateDialog,
+    selectedCard,
+    deleteCardMutation,
+  } = useCardPreview();
   return (
     <>
       <motion.div

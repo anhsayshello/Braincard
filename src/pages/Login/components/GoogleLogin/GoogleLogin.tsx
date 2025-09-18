@@ -36,7 +36,7 @@ export default function GoogleLogin() {
       disabled={isLoading}
     >
       <img className="w-4 aspect-square" src={GoogleIcon} alt="google-icon" />
-      Login with Google
+      Continue with Google
     </Button>
   );
 }

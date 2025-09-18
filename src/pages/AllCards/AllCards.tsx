@@ -7,179 +7,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  ArrowUpZA,
-  ArrowDownAZ,
-  Baby,
-  Dumbbell,
-  SearchIcon,
-  Anchor,
-  Telescope,
-  FunnelX,
-  Soup,
-  Laugh,
-  Webhook,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { FunnelX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createSearchParams, Link, useNavigate } from "react-router";
+import { createSearchParams, Link } from "react-router";
 import path from "@/constants/path";
-import useQueryConfig from "@/hooks/useQueryConfig";
-import { omit } from "lodash";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { CardQueryParams } from "@/types/card.type";
 import Pagination from "@/components/Pagination";
 import AllCardsSkeleton from "./components/AllCardsSkeleton";
-import allCardsApi from "@/apis/allCards.api";
-import { useCallback, useMemo, useRef } from "react";
 import Metadata from "@/components/Metadata";
 import CardNotFound from "./components/CardNotFound";
 import CardPreviewItem from "@/components/CardPreviewItem";
-
-const filters = [
-  {
-    title: "New Cards",
-    icon: Baby,
-    query: "new-cards",
-  },
-  {
-    title: "In Review",
-    icon: Dumbbell,
-    query: "in-review",
-  },
-  {
-    title: "Mastered",
-    icon: Anchor,
-    query: "mastered",
-  },
-];
-
-const sorts = [
-  {
-    title: "Newest",
-    value: "newest",
-    icon: Soup,
-    sortBy: "created-at",
-    sortOrder: "desc",
-  },
-  {
-    title: "Interval",
-    value: "interval",
-    icon: Webhook,
-    sortBy: "interval",
-    sortOrder: "desc",
-  },
-  {
-    title: "Review times",
-    value: "review-times",
-    icon: Telescope,
-    sortBy: "review-count",
-    sortOrder: "desc",
-  },
-  {
-    title: "Forget times",
-    value: "forget-times",
-    icon: Laugh,
-    sortBy: "forget-count",
-    sortOrder: "desc",
-  },
-  {
-    title: "Alphabet A-Z",
-    value: "a-z",
-    icon: ArrowDownAZ,
-    sortBy: "front-card",
-    sortOrder: "asc",
-  },
-  {
-    title: "Alphabet Z-A",
-    value: "z-a",
-    icon: ArrowUpZA,
-    sortBy: "front-card",
-    sortOrder: "desc",
-  },
-];
+import AppTitle from "@/components/shared/app-title";
+import SearchBar from "@/components/shared/search-bar";
+import useAllCards from "@/hooks/useAllCards";
 
 export default function AllCards() {
-  const { filter: currentFilter, sortBy, sortOrder } = useQueryConfig();
-  const queryConfig = useQueryConfig();
-  const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { data, isPending } = useQuery({
-    queryKey: ["allCards", queryConfig],
-    queryFn: () => allCardsApi.search(queryConfig as CardQueryParams),
-    placeholderData: keepPreviousData,
-  });
-
-  const dataAllCards = useMemo(() => data?.data.cards, [data]);
-  const dataAllCardsPagination = useMemo(() => data?.data.pagination, [data]);
-
-  const handleTextSearch = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(e.target.value);
-      if (e.target.value.trim() !== queryConfig.q) {
-        navigate({
-          pathname: path.allCards,
-          search: createSearchParams({
-            ...queryConfig,
-            q: e.target.value.trim(),
-          }).toString(),
-        });
-      }
-    },
-    [queryConfig, navigate]
-  );
-  const getCurrentSortValue = useCallback(() => {
-    const currentSort = sorts.find(
-      (sort) => sort.sortBy === sortBy && sort.sortOrder === sortOrder
-    );
-    return currentSort ? currentSort.value : "newest";
-  }, [sortOrder, sortBy]);
-
-  const handleSortChange = useCallback(
-    (value: string) => {
-      const selectedSort = sorts.find((s) => s.value === value);
-      const newParams = { ...queryConfig };
-
-      if (selectedSort) {
-        newParams.sortBy = selectedSort.sortBy;
-        newParams.sortOrder = selectedSort.sortOrder;
-      }
-
-      navigate({
-        pathname: path.allCards,
-        search: createSearchParams(newParams).toString(),
-      });
-    },
-    [queryConfig, navigate]
-  );
-
-  const handleClearFilter = useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-    navigate({
-      pathname: path.allCards,
-      search: createSearchParams(
-        omit({ ...queryConfig, sortBy: "created-at" }, ["filter", "q"])
-      ).toString(),
-    });
-  }, [navigate, queryConfig]);
+  const {
+    isPending,
+    inputRef,
+    handleSearchChange,
+    filters,
+    currentFilter,
+    queryConfig,
+    getCurrentSortValue,
+    handleSortChange,
+    sorts,
+    handleClearFilter,
+    dataAllCardsPagination,
+    dataAllCards,
+  } = useAllCards();
 
   if (isPending) return <AllCardsSkeleton isPending={isPending} />;
 
   return (
     <>
       <Metadata title="Seach | BrainCard" content="search" />
-      <div className="flex h-9 items-center gap-2 border-b px-5 mt-3">
-        <SearchIcon className="size-4 shrink-0 opacity-50" />
-        <Input
-          ref={inputRef}
-          type="text"
-          placeholder="Enter a word to search"
-          className="!border-0 !outline-0 !ring-0 !shadow-none focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!ring-0 aria-invalid:!border-0"
-          onChange={handleTextSearch}
-        />
-      </div>
+      <AppTitle title="Search" />
+
+      <SearchBar inputRef={inputRef} handleSearchChange={handleSearchChange} />
       <div className="flex items-center justify-between my-5 flex-wrap gap-2.5">
         <div className="flex items-center flex-wrap gap-2.5">
           <div className="flex items-center gap-3 flex-wrap">

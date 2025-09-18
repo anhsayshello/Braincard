@@ -14,7 +14,7 @@ const AllCards = lazy(() => import("./pages/AllCards"));
 const Feedback = lazy(() => import("./pages/Feedback"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const Account = lazy(() => import("./pages/Account"));
-const Home = lazy(() => import("./pages/Home"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthenticatedStore(
@@ -26,7 +26,7 @@ function RejectedRoute() {
   const isAuthenticated = useAuthenticatedStore(
     (state) => state.isAuthenticated
   );
-  return !isAuthenticated ? <Outlet /> : <Navigate to={path.home} />;
+  return !isAuthenticated ? <Outlet /> : <Navigate to={path.dashboard} />;
 }
 
 export default function useRouteElements() {
@@ -37,8 +37,8 @@ export default function useRouteElements() {
       children: [
         {
           index: true,
-          path: path.home,
-          element: <Home />,
+          path: path.dashboard,
+          element: <Dashboard />,
         },
       ],
     },
