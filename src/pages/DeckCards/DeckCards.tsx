@@ -127,7 +127,7 @@ export default function DeckCards() {
                 disabled={data?.data.cards.length === 0}
               >
                 <CircleCheckBig />
-                Check All
+                Select All
               </Button>
             )}
             {someCheckCards && (

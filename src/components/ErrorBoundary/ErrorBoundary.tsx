@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 
 interface Props {
   children?: ReactNode;
@@ -27,7 +28,9 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         <main className="grid min-h-screen place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
           <div className="text-center">
-            <p className="text-base font-semibold">500</p>
+            <Badge variant="secondary" className="text-base font-semibold">
+              500
+            </Badge>
             <h1 className="mt-4 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
               Error!
             </h1>
@@ -36,7 +39,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a href="/">
-                <Button className="cursor-pointer" variant="ghost">
+                <Button className="cursor-pointer" variant="default">
                   Go back home
                 </Button>
               </a>

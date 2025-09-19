@@ -1,7 +1,12 @@
 import path from "@/constants/path";
 import useQueryConfig from "@/hooks/useQueryConfig";
 import { useCallback, useMemo } from "react";
-import { createSearchParams, useNavigate, useParams } from "react-router";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 
 export interface PaginationProps {
   dataPagination: {
@@ -20,6 +25,8 @@ export default function usePagination({
   const { deckId } = useParams();
   const queryConfig = useQueryConfig();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { deckName } = location.state ?? {};
   const handlePageChange = useCallback(
     (newPage: number) => {
       const newParams = { ...queryConfig, page: newPage.toString() };
@@ -28,12 +35,15 @@ export default function usePagination({
             pathname: path.allCards,
             search: createSearchParams(newParams).toString(),
           })
-        : navigate({
-            pathname: `/decks/${deckId}/cards`,
-            search: createSearchParams(newParams).toString(),
-          });
+        : navigate(
+            {
+              pathname: `/decks/${deckId}/cards`,
+              search: createSearchParams(newParams).toString(),
+            },
+            { state: { deckName } }
+          );
     },
-    [queryConfig, deckId, navigate, isAllCards]
+    [queryConfig, deckId, navigate, isAllCards, deckName]
   );
 
   const generatePageNumbers = useCallback(
