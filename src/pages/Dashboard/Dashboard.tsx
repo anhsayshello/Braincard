@@ -38,21 +38,25 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2.5">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-lg font-bold text-gray-900">
+              <div className="flex items-center justify-between gap-2">
+                <div className="overflow-hidden">
+                  <p className="text-sm text-gray-600 mb-1 truncate">
+                    {stat.label}
+                  </p>
+                  <p className="text-sm md:text-base font-bold text-gray-900 truncate">
                     {stat.value}
                   </p>
                 </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div
+                  className={`${stat.color} py-1.5 px-2.5 md:p-2.5 xl:p-3 rounded-lg`}
+                >
+                  <stat.icon className="aspect-square w-4 md:w-6 text-white" />
                 </div>
               </div>
             </div>
@@ -67,7 +71,7 @@ export default function Dashboard() {
           </TabsList>
           <TabsContent
             value="bar"
-            className="mt-3 mb-2 md:flex md:justify-center"
+            className="mt-12 md:mt-3 md:flex md:justify-center"
           >
             <ChartContainer config={chartConfig}>
               <BarChart accessibilityLayer data={barData}>

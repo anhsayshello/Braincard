@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import useUserQuery from "@/hooks/useUserQuery";
 import { useProfileStore } from "@/stores/useProfileStore";
 
-export default function useAccount() {
+export default function useUpdateUser() {
   const [isUpdate, setIsUpdate] = useState(false);
 
   const profile = useProfileStore((state) => state.profile);
@@ -49,12 +49,14 @@ export default function useAccount() {
     updateUserMutation.mutate(data);
   };
 
+  const isPending = updateUserMutation.isPending;
+
   return {
     isUpdate,
     setIsUpdate,
     dataUser,
     form,
     onSubmit,
-    updateUserMutation,
+    isPending,
   };
 }

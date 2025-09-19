@@ -45,12 +45,7 @@ export default function CardDetailItem({ card, onClick }: CardDetailProps) {
                 onMouseEnter={() => setHoveredStatus(button.status)}
                 onMouseLeave={() => setHoveredStatus(null)}
                 disabled={reviewCardMutation.isPending}
-                className={`
-                        py-3 px-2 rounded-lg font-medium transition-all duration-200
-                        ${button.color} ${button.textColor}
-                        disabled:opacity-50 disabled:cursor-not-allowed
-                        transform hover:scale-105 active:scale-95
-                      `}
+                className={`py-3 px-2 text-sm md:text-base rounded-lg font-medium transition-all duration-200 ${button.color} ${button.textColor} disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95`}
               >
                 {button.label}
               </button>

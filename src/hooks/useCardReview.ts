@@ -12,7 +12,7 @@ export default function useCardReview() {
 
   const { deckId } = useParams();
 
-  const { data: dataCardsReview } = useQuery({
+  const { data: dataCardsReview, isPending } = useQuery({
     queryKey: ["cardsReview", deckId],
     queryFn: () => cardApi.getCardsReview(deckId as string),
   });
@@ -44,5 +44,5 @@ export default function useCardReview() {
     setProgress(0);
   }, [deckId]);
 
-  return { dataCardsReview, progress, show, setShow, currentCard };
+  return { dataCardsReview, progress, show, setShow, currentCard, isPending };
 }

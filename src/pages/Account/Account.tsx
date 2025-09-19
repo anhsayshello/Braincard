@@ -18,16 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SquarePen } from "lucide-react";
 import AppTitle from "@/components/shared/app-title";
-import useAccount from "@/hooks/useAccount";
+import useUpdateUser from "@/hooks/useUpdateUser";
 export default function Account() {
-  const {
-    isUpdate,
-    setIsUpdate,
-    dataUser,
-    form,
-    onSubmit,
-    updateUserMutation,
-  } = useAccount();
+  const { isUpdate, setIsUpdate, dataUser, form, onSubmit, isPending } =
+    useUpdateUser();
 
   return (
     <>
@@ -94,7 +88,7 @@ export default function Account() {
                       <div>
                         <FormControl className="basis-3/4">
                           <Input
-                            disabled={updateUserMutation.isPending || !isUpdate}
+                            disabled={isPending || !isUpdate}
                             placeholder="name"
                             {...field}
                             className="text-sm"
@@ -120,7 +114,7 @@ export default function Account() {
                     <Button
                       type="submit"
                       className="flex justify-self-center"
-                      disabled={updateUserMutation.isPending}
+                      disabled={isPending}
                     >
                       Update
                     </Button>

@@ -21,6 +21,7 @@ import Spinner from "@/components/Spinner";
 import AppTitle from "@/components/shared/app-title";
 import SearchBar from "@/components/shared/search-bar";
 import useDeckCards from "@/hooks/useDeckCards";
+import path from "@/constants/path";
 
 export default function DeckCards() {
   const {
@@ -55,7 +56,7 @@ export default function DeckCards() {
       <>
         <div className="flex items-end gap-4">
           <Button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate({ pathname: path.deck })}
             variant="ghost"
             className="cursor-pointer"
           >
