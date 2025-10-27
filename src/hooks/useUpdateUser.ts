@@ -6,13 +6,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import userApi from "@/apis/user.api";
 import { toast } from "sonner";
 import useUserQuery from "@/hooks/useUserQuery";
-import { useProfileStore } from "@/stores/useProfileStore";
 
 export default function useUpdateUser() {
   const [isUpdate, setIsUpdate] = useState(false);
-
-  const profile = useProfileStore((state) => state.profile);
-  console.log(profile, "zustand subcribe");
 
   const { data } = useUserQuery();
   const dataUser = useMemo(() => data?.data, [data]);

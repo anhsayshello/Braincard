@@ -21,30 +21,80 @@ import Spinner from "@/components/Spinner";
 import AppTitle from "@/components/shared/app-title";
 import SearchBar from "@/components/shared/search-bar";
 import useDeckCards from "@/hooks/useDeckCards";
+import { useEffect, useMemo, useRef, useState } from "react";
+import searchHandler from "@/helpers/searchHandler";
 import path from "@/constants/path";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { Card } from "@/types/card.type";
+import useQueryConfig from "@/hooks/useQueryConfig";
+import useDeleteCard from "@/hooks/useDeleteCard";
+
+export interface ExtendedCard extends Card {
+  checked: boolean;
+}
 
 export default function DeckCards() {
-  const {
-    data,
-    cards,
-    openDeleteDialog,
-    setOpenDeleteDialog,
-    deckId,
-    refetch,
-    inputRef,
+  const { deckId } = useParams();
+  const [cards, setCards] = useState<ExtendedCard[]>([]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const queryConfig = useQueryConfig();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { deckName } = location.state;
+  const { data, refetch, isPending, dataPagination } = useDeckCards();
+  const deleteCardMutation = useDeleteCard();
+
+  useEffect(() => {
+    if (data) {
+      setCards(data?.data.cards.map((card) => ({ ...card, checked: false })));
+    }
+  }, [data]);
+
+  const handleSearchChange = searchHandler({
+    queryConfig,
+    pathName: `/decks/${deckId}/cards`,
     navigate,
-    deckName,
-    isPending,
-    dataPagination,
-    handleSearchChange,
-    handleCheck,
-    handleCheckAll,
-    handleUncheckAll,
-    checkedCardCount,
-    someCheckCards,
-    handleDeleteMany,
-    deleteCardsMutation,
-  } = useDeckCards();
+    location: location,
+  });
+
+  const handleCheck = (id: string) => {
+    setCards(
+      cards.map((card) =>
+        card.id === id ? { ...card, checked: !card.checked } : card
+      )
+    );
+  };
+  console.log(cards);
+
+  const handleCheckAll = () => {
+    setCards(cards.map((card) => ({ ...card, checked: true })));
+  };
+
+  const handleUncheckAll = () => {
+    setCards(cards.map((card) => ({ ...card, checked: false })));
+  };
+
+  const checkedCardCount = useMemo(
+    () => cards.filter((card) => card.checked).length,
+    [cards]
+  );
+  const someCheckCards = useMemo(
+    () => cards.some((card) => card.checked),
+    [cards]
+  );
+
+  const handleDeleteMany = () => {
+    if (deckId) {
+      const cardIds = cards
+        .filter((card) => card.checked)
+        .map((card) => card.id);
+      deleteCardMutation.mutate(
+        { deckId, cardIds },
+        { onSuccess: () => setOpenDeleteDialog(false) }
+      );
+    }
+  };
 
   if (isPending) {
     return <DeckCardsSkeleton />;
@@ -196,9 +246,9 @@ export default function DeckCards() {
             <AlertDialogAction
               onClick={handleDeleteMany}
               className="cursor-pointer bg-red-500 hover:bg-red-400"
-              disabled={deleteCardsMutation.isPending}
+              disabled={deleteCardMutation.isPending}
             >
-              {deleteCardsMutation.isPending ? <Spinner /> : "Delete"}
+              {deleteCardMutation.isPending ? <Spinner /> : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

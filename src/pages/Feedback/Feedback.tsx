@@ -11,10 +11,62 @@ import { Textarea } from "@/components/ui/textarea";
 import Spinner from "@/components/Spinner";
 import Metadata from "@/components/Metadata";
 import AppTitle from "@/components/shared/app-title";
-import useFeedback from "@/hooks/useFeedback";
+import useSendFeedback from "@/hooks/useSendFeedback";
+import { Lightbulb, Bug, ThumbsUp, MessageCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FeedbackSchema, feedbackSchema } from "@/utils/schema";
+import FEEDBACK_TYPE from "@/constants/feedback";
+import handleFormError from "@/helpers/handleFormError";
+import { useCallback } from "react";
+import { toast } from "sonner";
+
+const feedbackTypes = [
+  {
+    id: FEEDBACK_TYPE.FEATURE_REQUEST,
+    label: "Feature Request",
+    icon: Lightbulb,
+  },
+  {
+    id: FEEDBACK_TYPE.IMPROVEMENTS,
+    label: "Improvement",
+    icon: ThumbsUp,
+  },
+  { id: FEEDBACK_TYPE.BUG_REPORT, label: "Bug Report", icon: Bug },
+  {
+    id: FEEDBACK_TYPE.OTHERS,
+    label: "General Feedback",
+    icon: MessageCircle,
+  },
+];
 
 export default function Feedback() {
-  const { form, feedbackTypes, feedbackMutation, onSubmit } = useFeedback();
+  const sendFeedbackMutation = useSendFeedback();
+  const form = useForm<FeedbackSchema>({
+    resolver: zodResolver(feedbackSchema),
+  });
+
+  const onSubmit = useCallback(
+    (data: FeedbackSchema) => {
+      console.log(data);
+      if (typeof data.type === "number") {
+        sendFeedbackMutation.mutate(data, {
+          onSuccess: () => {
+            form.reset({ type: undefined, content: "" });
+            toast.success("Your feedback has been submitted!", {
+              description: (
+                <div className="text-black">
+                  Thanks for sharing your thoughts!
+                </div>
+              ),
+            });
+          },
+          onError: (error) => handleFormError(form, error, "content"),
+        });
+      }
+    },
+    [sendFeedbackMutation]
+  );
   return (
     <>
       <Metadata title="Feedback | BrainCard" content="feedback" />
@@ -83,8 +135,11 @@ export default function Feedback() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={feedbackMutation.isPending}>
-                    {feedbackMutation.isPending ? <Spinner /> : "Submit"}
+                  <Button
+                    type="submit"
+                    disabled={sendFeedbackMutation.isPending}
+                  >
+                    {sendFeedbackMutation.isPending ? <Spinner /> : "Submit"}
                   </Button>
                 </form>
               </Form>

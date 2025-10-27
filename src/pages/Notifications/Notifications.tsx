@@ -25,23 +25,74 @@ import getTimeAgo from "@/helpers/getTimeAgo";
 import EmptyNotification from "./components/EmptyNotification";
 import Metadata from "@/components/Metadata";
 import AppTitle from "@/components/shared/app-title";
-import useNotifications from "@/hooks/useNotifications";
+import { useCallback, useMemo, useState } from "react";
+import Notification from "@/types/notification.type";
+import { useSearchParams } from "react-router";
+import useManageNotifications from "@/hooks/useManageNotifications";
 
 export default function Notifications() {
+  const [openNotification, setOpenNotification] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification>();
+  const [, setSearchParams] = useSearchParams();
+  const [openDeleteAllDialog, setOpenDeleteAllDialog] = useState(false);
+
   const {
     dataNotifications,
-    isReadAll,
-    handleReadOne,
-    handleReadAll,
-    handleDeleteAll,
-    getDropdownOptions,
+    deleteOneNotificationMutation,
     deleteAllNotificationsMutation,
-    openNotification,
-    setOpenNotification,
-    selectedNotification,
-    openDeleteAllDialog,
-    setOpenDeleteAllDialog,
-  } = useNotifications();
+    readOneNotificationMutation,
+    readAllNotificationsMutation,
+  } = useManageNotifications();
+
+  const handleReadOne = useCallback(
+    (notification: Notification) => {
+      setSearchParams({ id: notification.id });
+      setSelectedNotification(notification);
+      setOpenNotification(true);
+      if (notification.isRead === false) {
+        readOneNotificationMutation.mutate(notification.id);
+      }
+    },
+    [
+      setSearchParams,
+      setSelectedNotification,
+      setOpenNotification,
+      readOneNotificationMutation,
+    ]
+  );
+
+  const handleReadAll = useCallback(() => {
+    readAllNotificationsMutation.mutate();
+  }, [readAllNotificationsMutation]);
+
+  const handleDeleteOne = useCallback(
+    (notification: Notification) => {
+      deleteOneNotificationMutation.mutate(notification.id);
+    },
+    [deleteOneNotificationMutation]
+  );
+
+  const handleDeleteAll = useCallback(() => {
+    deleteAllNotificationsMutation.mutate(undefined, {
+      onSuccess: () => setOpenDeleteAllDialog(false),
+    });
+  }, [deleteAllNotificationsMutation]);
+
+  const getDropdownOptions = useCallback(
+    (notification: Notification) => [
+      {
+        onClick: () => handleDeleteOne(notification),
+        name: "Delete",
+      },
+    ],
+    [handleDeleteOne]
+  );
+
+  const isReadAll = useMemo(
+    () => dataNotifications?.data.every((noti) => noti.isRead === true),
+    [dataNotifications]
+  );
 
   return (
     <>

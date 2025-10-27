@@ -25,21 +25,57 @@ import EmptyDeck from "./components/EmptyDeck";
 import Metadata from "@/components/Metadata";
 import DeckListSkeleton from "./components/DeckListSkeleton";
 import AppTitle from "@/components/shared/app-title";
-import useDeckList from "@/hooks/useDeckList";
+import useDecks from "@/hooks/useDecks";
+import useDeleteDeck from "@/hooks/useDeleteDeck";
+import { useCallback, useState } from "react";
 
 export default function DeckList() {
-  const {
-    dataDeck,
-    isPending,
-    deleteDeckMutation,
-    handleDeleteConfirm,
-    getDropdownOptions,
-    openDeleteDialog,
-    setOpenDeleteDialog,
-    openUpdateDialog,
-    setOpenUpdateDialog,
-    selectedDeck,
-  } = useDeckList();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
+  const { dataDeck, isPending } = useDecks();
+  const deleteDeckMutation = useDeleteDeck(selectedDeck);
+
+  const handleRenameClick = useCallback(
+    (deck: Deck) => {
+      setSelectedDeck(deck);
+      setOpenUpdateDialog(true);
+    },
+    [setSelectedDeck, setOpenUpdateDialog]
+  );
+
+  const handleDeleteClick = useCallback(
+    (deck: Deck) => {
+      setSelectedDeck(deck);
+      setOpenDeleteDialog(true);
+    },
+    [setSelectedDeck, setOpenDeleteDialog]
+  );
+
+  const handleDeleteConfirm = useCallback(() => {
+    if (selectedDeck) {
+      deleteDeckMutation.mutate(selectedDeck.id, {
+        onSuccess: () => {
+          setOpenDeleteDialog(false);
+          setSelectedDeck(null);
+        },
+      });
+    }
+  }, [selectedDeck, deleteDeckMutation]);
+
+  const getDropdownOptions = useCallback(
+    (deck: Deck) => [
+      {
+        onClick: () => handleRenameClick(deck),
+        name: "Rename",
+      },
+      {
+        onClick: () => handleDeleteClick(deck),
+        name: "Delete",
+      },
+    ],
+    [handleRenameClick, handleDeleteClick]
+  );
 
   if (isPending) {
     return <DeckListSkeleton />;

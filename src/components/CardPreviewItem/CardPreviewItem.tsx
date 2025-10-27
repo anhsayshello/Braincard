@@ -18,7 +18,8 @@ import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import CardDetailItem from "../CardDetailItem";
 import { Checkbox } from "../ui/checkbox";
-import useCardPreview from "@/hooks/useCardPreview";
+import { useCallback, useState } from "react";
+import useDeleteCard from "@/hooks/useDeleteCard";
 
 export default function CardPreviewItem({
   card,
@@ -31,19 +32,65 @@ export default function CardPreviewItem({
   handleCheck?: () => void;
   isChecked?: boolean;
 }) {
-  const {
-    handleDeleteConfirm,
-    handleOpenCardDetail,
-    getDropdownOptions,
-    openCardDetail,
-    setOpenCardDetail,
-    openDeleteDialog,
-    setOpenDeleteDialog,
-    openUpdateDialog,
-    setOpenUpdateDialog,
-    selectedCard,
-    deleteCardMutation,
-  } = useCardPreview();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [openCardDetail, setOpenCardDetail] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+  const deleteCardMutation = useDeleteCard();
+
+  const handleOpenCardDetail = useCallback(
+    (card: CardType) => {
+      setSelectedCard(card);
+      setOpenCardDetail(true);
+    },
+    [setSelectedCard, setOpenCardDetail]
+  );
+
+  const handleEditClick = useCallback(
+    (card: CardType) => {
+      setSelectedCard(card);
+      setOpenUpdateDialog(true);
+    },
+    [setSelectedCard, setOpenUpdateDialog]
+  );
+
+  const handleDeleteClick = useCallback(
+    (card: CardType) => {
+      setSelectedCard(card);
+      setOpenDeleteDialog(true);
+    },
+    [setSelectedCard, setOpenDeleteDialog]
+  );
+  const handleDeleteConfirm = useCallback(() => {
+    if (selectedCard && selectedCard.deckId) {
+      deleteCardMutation.mutate(
+        {
+          deckId: selectedCard.deckId,
+          cardIds: [selectedCard.id],
+        },
+        {
+          onSuccess: () => {
+            setOpenDeleteDialog(false);
+            setSelectedCard(null);
+          },
+        }
+      );
+    }
+  }, [selectedCard, deleteCardMutation]);
+
+  const getDropdownOptions = useCallback(
+    (card: CardType) => [
+      {
+        onClick: () => handleEditClick(card),
+        name: "Edit",
+      },
+      {
+        onClick: () => handleDeleteClick(card),
+        name: "Delete",
+      },
+    ],
+    [handleEditClick, handleDeleteClick]
+  );
   return (
     <>
       <motion.div

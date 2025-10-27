@@ -3,17 +3,49 @@ import Metadata from "@/components/Metadata";
 import AppTitle from "@/components/shared/app-title";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
-
 import { Progress } from "@/components/ui/progress";
-import useCardReview from "@/hooks/useCardReview";
 import { Reply } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { Card } from "@/types/card.type";
+import { useEffect, useRef, useState } from "react";
+import useCardsReview from "@/hooks/useCardsReview";
 
 export default function CardReview() {
   const navigate = useNavigate();
-  const { dataCardsReview, progress, show, setShow, currentCard, isPending } =
-    useCardReview();
+  const [progress, setProgress] = useState(0);
+  const [show, setShow] = useState(false);
+  const [currentCard, setCurrentCard] = useState<Card>();
+  const initialTotalRef = useRef<number>(0);
+  const { deckId } = useParams();
+
+  const { dataCardsReview, isPending } = useCardsReview();
+
+  useEffect(() => {
+    setCurrentCard(dataCardsReview?.data[0]);
+  }, [dataCardsReview]);
+
+  useEffect(() => {
+    if (dataCardsReview?.data) {
+      const currentTotal = dataCardsReview.data.length;
+
+      if (initialTotalRef.current === 0) {
+        initialTotalRef.current = currentTotal;
+        setProgress(0);
+      } else {
+        const reviewed = initialTotalRef.current - currentTotal;
+
+        const progressPercentage = (reviewed / initialTotalRef.current) * 100;
+        setProgress(progressPercentage);
+      }
+    }
+  }, [dataCardsReview]);
+
+  useEffect(() => {
+    initialTotalRef.current = 0;
+    setProgress(0);
+  }, [deckId]);
+
   const variants = {
     visible: { opacity: 1, x: 0 },
     hidden: { opacity: 0.5, x: -10 },
